@@ -1,0 +1,1187 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>مهنة - منصة التوظيف</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <style>
+      :root {
+        --bg: #f2f2f7;
+        --glass: rgba(255, 255, 255, 0.72);
+        --glass-dark: rgba(255, 255, 255, 0.55);
+        --border: rgba(255, 255, 255, 0.5);
+        --green: #34c759;
+        --blue: #007aff;
+        --red: #ff3b30;
+        --orange: #ff9500;
+        --text: #1c1c1e;
+        --text2: #3a3a3c;
+        --text3: #8e8e93;
+        --radius: 20px;
+        --radius-sm: 14px;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+        --shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.08);
+        font-family:
+          "Tajawal",
+          -apple-system,
+          sans-serif;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: var(--font);
+        background: var(--bg);
+        color: var(--text);
+        direction: rtl;
+        min-height: 100vh;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .nav-bar {
+        background: var(--glass);
+        backdrop-filter: saturate(180%) blur(24px);
+        -webkit-backdrop-filter: saturate(180%) blur(24px);
+        padding: 0 12px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+
+      .nav-bar .logo {
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--green);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .nav-bar .logo i {
+        font-size: 18px;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2px;
+      }
+      .nav-links a {
+        color: var(--blue);
+        text-decoration: none;
+        padding: 8px 14px;
+        border-radius: 24px;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        letter-spacing: -0.2px;
+      }
+      .nav-links a i {
+        font-size: 12px;
+      }
+      .nav-links a:active {
+        transform: scale(0.94);
+        opacity: 0.7;
+      }
+
+      .content {
+        max-width: 680px;
+        margin: auto;
+        padding: 12px 14px 90px;
+      }
+
+      .card {
+        background: var(--glass);
+        backdrop-filter: saturate(180%) blur(20px);
+        -webkit-backdrop-filter: saturate(180%) blur(20px);
+        border: 0.5px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+        margin-bottom: 10px;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.25s ease;
+      }
+      .card:active {
+        transform: scale(0.98);
+        background: rgba(255, 255, 255, 0.85);
+      }
+
+      .btn {
+        padding: 12px 20px;
+        border-radius: 26px;
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        border: none;
+        transition: all 0.2s ease;
+        font-family: inherit;
+        letter-spacing: -0.2px;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .btn:active {
+        transform: scale(0.94);
+      }
+
+      .btn-primary {
+        background: var(--blue);
+        color: white;
+      }
+      .btn-success {
+        background: var(--green);
+        color: white;
+      }
+      .btn-danger {
+        background: var(--red);
+        color: white;
+      }
+      .btn-warning {
+        background: var(--orange);
+        color: white;
+      }
+      .btn-ghost {
+        background: rgba(120, 120, 128, 0.12);
+        color: var(--blue);
+      }
+      .btn-sm {
+        padding: 8px 14px;
+        font-size: 12px;
+        border-radius: 20px;
+      }
+      .btn-xs {
+        padding: 6px 12px;
+        font-size: 11px;
+        border-radius: 18px;
+      }
+      .btn-block {
+        width: 100%;
+      }
+
+      .input-ios {
+        width: 100%;
+        padding: 13px 16px;
+        border: 0.5px solid rgba(0, 0, 0, 0.1);
+        border-radius: var(--radius-sm);
+        font-size: 15px;
+        font-family: inherit;
+        background: rgba(255, 255, 255, 0.6);
+        transition: all 0.2s ease;
+        outline: none;
+      }
+      .input-ios:focus {
+        background: rgba(255, 255, 255, 0.9);
+        border-color: var(--blue);
+        box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+      }
+
+      .label-ios {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text3);
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        letter-spacing: -0.2px;
+      }
+      .badge-green {
+        background: rgba(52, 199, 89, 0.15);
+        color: var(--green);
+      }
+      .badge-orange {
+        background: rgba(255, 149, 0, 0.15);
+        color: var(--orange);
+      }
+      .badge-red {
+        background: rgba(255, 59, 48, 0.15);
+        color: var(--red);
+      }
+      .badge-blue {
+        background: rgba(0, 122, 255, 0.12);
+        color: var(--blue);
+      }
+
+      .section-title {
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--text);
+        margin: 8px 0 12px;
+        letter-spacing: -0.3px;
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+      }
+
+      .stat-mini {
+        text-align: center;
+        padding: 14px 8px;
+      }
+      .stat-mini .num {
+        font-size: 28px;
+        font-weight: 900;
+        color: var(--text);
+      }
+      .stat-mini .lbl {
+        font-size: 11px;
+        color: var(--text3);
+        margin-top: 2px;
+        font-weight: 500;
+      }
+
+      .list-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 0;
+        border-bottom: 0.5px solid rgba(0, 0, 0, 0.06);
+        gap: 10px;
+      }
+      .list-row:last-child {
+        border-bottom: none;
+      }
+      .list-row .info {
+        flex: 1;
+      }
+      .list-row .info strong {
+        font-size: 15px;
+        display: block;
+        margin-bottom: 2px;
+      }
+      .list-row .info span {
+        font-size: 12px;
+        color: var(--text3);
+      }
+      .list-row .actions {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        flex-shrink: 0;
+      }
+
+      .hero-ios {
+        text-align: center;
+        padding: 40px 20px 30px;
+      }
+      .hero-ios h1 {
+        font-size: 32px;
+        font-weight: 900;
+        margin-bottom: 6px;
+        letter-spacing: -0.5px;
+      }
+      .hero-ios h1 span {
+        color: var(--green);
+      }
+      .hero-ios p {
+        color: var(--text3);
+        font-size: 15px;
+        margin-bottom: 22px;
+      }
+
+      .alert {
+        padding: 14px 18px;
+        border-radius: var(--radius-sm);
+        margin-bottom: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--glass);
+        backdrop-filter: blur(10px);
+      }
+      .alert-success {
+        color: var(--green);
+      }
+      .alert-error {
+        color: var(--red);
+      }
+
+      .notif-btn {
+        position: relative;
+        cursor: pointer;
+      }
+      .notif-badge {
+        background: var(--red);
+        color: white;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        font-size: 10px;
+        font-weight: 800;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: -2px;
+        right: -6px;
+      }
+
+      .sheet {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--glass);
+        backdrop-filter: saturate(180%) blur(30px);
+        -webkit-backdrop-filter: saturate(180%) blur(30px);
+        border-radius: 28px 28px 0 0;
+        max-height: 70vh;
+        overflow-y: auto;
+        z-index: 999;
+        padding: 20px 16px 30px;
+        box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.1);
+        transform: translateY(100%);
+        transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+      }
+      .sheet.show {
+        transform: translateY(0);
+      }
+      .sheet-handle {
+        width: 36px;
+        height: 4px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 2px;
+        margin: 0 auto 16px;
+      }
+      .sheet-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 998;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s;
+      }
+      .sheet-overlay.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .tab-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--glass);
+        backdrop-filter: saturate(180%) blur(24px);
+        -webkit-backdrop-filter: saturate(180%) blur(24px);
+        border-top: 0.5px solid rgba(0, 0, 0, 0.08);
+        display: flex;
+        justify-content: space-around;
+        padding: 6px 0 env(safe-area-inset-bottom);
+        z-index: 900;
+      }
+      .tab-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        padding: 6px 10px;
+        text-decoration: none;
+        color: var(--text3);
+        font-size: 10px;
+        font-weight: 600;
+        transition: color 0.2s;
+      }
+      .tab-item i {
+        font-size: 20px;
+      }
+      .tab-item.active {
+        color: var(--blue);
+      }
+
+      @media (min-width: 769px) {
+        .tab-bar {
+          display: none;
+        }
+        .content {
+          padding-bottom: 30px;
+        }
+        .nav-bar {
+          padding: 0 28px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="nav-bar">
+      <a href="/" class="logo"><i class="fa-solid fa-briefcase"></i> مهنة</a>
+      <div class="nav-links">
+        <a href="/" class="{% if page == 'home' %}active{% endif %}"
+          ><i class="fa-solid fa-house"></i
+        ></a>
+        <a href="/jobs"><i class="fa-solid fa-magnifying-glass"></i></a>
+        {% if session.get('user_id') %}
+        <a href="/dashboard"><i class="fa-solid fa-chart-pie"></i></a>
+        <div
+          class="notif-btn"
+          onclick="toggleSheet()"
+          style="display: flex; align-items: center"
+        >
+          <i
+            class="fa-solid fa-bell"
+            style="font-size: 13px; color: var(--blue)"
+          ></i>
+          <span id="notif-badge" class="notif-badge">0</span>
+        </div>
+        <a href="/logout" class="btn btn-ghost btn-sm"
+          ><i class="fa-solid fa-right-from-bracket"></i
+        ></a>
+        {% else %}
+        <a href="/login" class="btn btn-ghost btn-sm">دخول</a>
+        <a href="/register" class="btn btn-primary btn-sm">تسجيل</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="sheet-overlay" id="sheet-overlay" onclick="closeSheet()"></div>
+    <div class="sheet" id="notif-sheet">
+      <div class="sheet-handle"></div>
+      <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 14px">
+        الاشعارات
+      </h3>
+      <div id="notif-list" style="color: var(--text3); text-align: center">
+        تحميل...
+      </div>
+      <button
+        class="btn btn-ghost btn-block btn-sm"
+        style="margin-top: 16px"
+        onclick="markAllRead()"
+      >
+        تحديد الكل كمقروء
+      </button>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %}
+    <div class="content" style="padding-bottom: 0">
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %} {% endwith %}
+
+    <div class="content" id="main-content">
+      {% if page == 'home' %}
+      <div class="hero-ios">
+        <h1>ابحث عن <span>وظيفتك</span></h1>
+        <p>منصة التوظيف الاولى في العراق</p>
+        <a
+          href="/jobs"
+          class="btn btn-primary"
+          style="font-size: 16px; padding: 14px 32px"
+          ><i class="fa-solid fa-magnifying-glass"></i> تصفح الوظائف</a
+        >
+        {% if not session.get('user_id') %}
+        <a
+          href="/register"
+          class="btn btn-ghost"
+          style="font-size: 16px; padding: 14px 32px; margin-right: 8px"
+          ><i class="fa-solid fa-person-add"></i> انشاء حساب</a
+        >
+        {% endif %}
+      </div>
+      <div class="card">
+        <div class="grid-3">
+          <div class="stat-mini">
+            <i
+              class="fa-solid fa-briefcase"
+              style="
+                color: var(--green);
+                font-size: 20px;
+                margin-bottom: 4px;
+                display: block;
+              "
+            ></i>
+            <div class="num">{{ stats.jc }}</div>
+            <div class="lbl">وظيفة</div>
+          </div>
+          <div class="stat-mini">
+            <i
+              class="fa-solid fa-building"
+              style="
+                color: var(--blue);
+                font-size: 20px;
+                margin-bottom: 4px;
+                display: block;
+              "
+            ></i>
+            <div class="num">{{ stats.cc }}</div>
+            <div class="lbl">شركة</div>
+          </div>
+          <div class="stat-mini">
+            <i
+              class="fa-solid fa-users"
+              style="
+                color: var(--orange);
+                font-size: 20px;
+                margin-bottom: 4px;
+                display: block;
+              "
+            ></i>
+            <div class="num">{{ stats.sc }}</div>
+            <div class="lbl">باحث</div>
+          </div>
+        </div>
+      </div>
+      <div class="section-title">احدث الوظائف</div>
+      {% if jobs %}{% for job in jobs %}<a
+        href="/job/{{ job.id }}"
+        style="text-decoration: none; color: inherit"
+        ><div class="card">
+          <strong style="font-size: 16px">{{ job.title }}</strong>
+          <p style="color: var(--text3); font-size: 13px; margin-top: 4px">
+            {{ job.company_name }}
+          </p>
+          <div style="display: flex; gap: 8px; margin-top: 8px">
+            <span class="badge badge-blue"
+              ><i class="fa-solid fa-location-dot"></i> {{ job.location }}</span
+            ><span class="badge badge-green"
+              ><i class="fa-solid fa-dollar-sign"></i> {{ job.salary_range
+              }}</span
+            >
+          </div>
+        </div></a
+      >{% endfor %}{% else %}
+      <p style="text-align: center; color: var(--text3)">لا توجد وظائف</p>
+      {% endif %} {% endif %} {% if page == 'register' %}
+      <div class="card">
+        <h2 style="text-align: center; font-size: 20px; margin-bottom: 20px">
+          انشاء حساب جديد
+        </h2>
+        <form method="POST">
+          <div style="margin-bottom: 14px">
+            <span class="label-ios">الاسم الكامل</span
+            ><input
+              class="input-ios"
+              type="text"
+              name="fullname"
+              placeholder="اسمك"
+              required
+            />
+          </div>
+          <div style="margin-bottom: 14px">
+            <span class="label-ios">البريد الالكتروني</span
+            ><input
+              class="input-ios"
+              type="email"
+              name="email"
+              placeholder="example@email.com"
+              required
+            />
+          </div>
+          <div style="margin-bottom: 14px">
+            <span class="label-ios">كلمة المرور</span
+            ><input
+              class="input-ios"
+              type="password"
+              name="password"
+              placeholder="--------"
+              required
+            />
+          </div>
+          <div style="margin-bottom: 14px">
+            <span class="label-ios">نوع الحساب</span
+            ><select class="input-ios" name="role">
+              <option value="seeker">باحث عن عمل</option>
+              <option value="employer">صاحب عمل</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">
+            انشاء حساب
+          </button>
+        </form>
+      </div>
+      {% endif %} {% if page == 'login' %}
+      <div class="card">
+        <h2 style="text-align: center; font-size: 20px; margin-bottom: 20px">
+          تسجيل الدخول
+        </h2>
+        <form method="POST">
+          <div style="margin-bottom: 14px">
+            <span class="label-ios">البريد</span
+            ><input
+              class="input-ios"
+              type="email"
+              name="email"
+              placeholder="example@email.com"
+              required
+            />
+          </div>
+          <div style="margin-bottom: 14px">
+            <span class="label-ios">كلمة المرور</span
+            ><input
+              class="input-ios"
+              type="password"
+              name="password"
+              placeholder="--------"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">دخول</button>
+        </form>
+        <div
+          class="card"
+          style="
+            background: rgba(0, 0, 0, 0.03);
+            margin-top: 14px;
+            font-size: 13px;
+          "
+        >
+          باحث: seeker@mehna.com / 123456<br />صاحب عمل: employer@mehna.com /
+          123456
+        </div>
+      </div>
+      {% endif %} {% if page == 'create_company' %}
+      <div class="card">
+        <h2 style="text-align: center; font-size: 20px; margin-bottom: 20px">
+          انشاء شركة
+        </h2>
+        <form method="POST">
+          <div style="margin-bottom: 14px">
+            <span class="label-ios">اسم الشركة</span
+            ><input
+              class="input-ios"
+              type="text"
+              name="company_name"
+              required
+            />
+          </div>
+          <div style="margin-bottom: 14px">
+            <span class="label-ios">المدينة</span
+            ><input
+              class="input-ios"
+              type="text"
+              name="location"
+              placeholder="بغداد"
+            />
+          </div>
+          <div style="margin-bottom: 14px">
+            <span class="label-ios">الموقع</span
+            ><input class="input-ios" type="url" name="website" />
+          </div>
+          <div style="margin-bottom: 14px">
+            <span class="label-ios">وصف</span
+            ><textarea class="input-ios" name="description" rows="2"></textarea>
+          </div>
+          <button type="submit" class="btn btn-success btn-block">انشاء</button>
+        </form>
+      </div>
+      {% endif %} {% if page == 'jobs' %}
+      <div class="section-title">جميع الوظائف</div>
+      {% if jobs %}{% for job in jobs %}<a
+        href="/job/{{ job.id }}"
+        style="text-decoration: none; color: inherit"
+        ><div class="card">
+          <strong style="font-size: 16px">{{ job.title }}</strong>
+          <p style="color: var(--text3); font-size: 13px; margin-top: 4px">
+            {{ job.company_name }}
+          </p>
+          <div style="display: flex; gap: 8px; margin-top: 8px">
+            <span class="badge badge-blue">{{ job.location }}</span
+            ><span class="badge badge-green">{{ job.salary_range }}</span>
+          </div>
+        </div></a
+      >{% endfor %}{% else %}
+      <p style="text-align: center; color: var(--text3)">لا توجد وظائف</p>
+      {% endif %} {% endif %} {% if page == 'job' %}
+      <div class="card">
+        <h1 style="font-size: 24px">{{ job.title }}</h1>
+        <p style="color: var(--text3); margin-bottom: 16px">
+          {{ job.company_name }}
+        </p>
+        <div class="grid-2" style="margin-bottom: 16px">
+          <div
+            style="
+              text-align: center;
+              padding: 12px;
+              background: rgba(0, 0, 0, 0.03);
+              border-radius: 14px;
+            "
+          >
+            <i class="fa-solid fa-location-dot" style="color: var(--blue)"></i>
+            <p style="font-size: 12px; color: var(--text3)">الموقع</p>
+            <strong>{{ job.location }}</strong>
+          </div>
+          <div
+            style="
+              text-align: center;
+              padding: 12px;
+              background: rgba(0, 0, 0, 0.03);
+              border-radius: 14px;
+            "
+          >
+            <i class="fa-solid fa-dollar-sign" style="color: var(--green)"></i>
+            <p style="font-size: 12px; color: var(--text3)">الراتب</p>
+            <strong>{{ job.salary_range }}</strong>
+          </div>
+        </div>
+        <p style="color: var(--text2); line-height: 1.8">
+          {{ job.description }}
+        </p>
+        {% if session.get('user_role') == 'job_seeker' %}{% if applied %}
+        <div class="alert alert-success">تم التقديم مسبقا</div>
+        {% else %}
+        <form action="/apply/{{ job.id }}" method="POST">
+          <button
+            type="submit"
+            class="btn btn-primary btn-block"
+            style="margin-top: 14px"
+          >
+            التقديم الان
+          </button>
+        </form>
+        {% endif %}{% elif not session.get('user_id') %}<a
+          href="/login"
+          class="btn btn-primary btn-block"
+          style="margin-top: 14px"
+          >سجل دخول للتقديم</a
+        >{% endif %}
+      </div>
+      {% endif %} {% if page == 'dashboard' %}
+      <div class="section-title">اهلا، {{ session.user_name }}</div>
+      {% if session.get('user_role') == 'job_seeker' %}
+      <div class="card">
+        <h3 style="margin-bottom: 14px">ملفي الشخصي</h3>
+        <form action="/update-profile" method="POST">
+          <div style="margin-bottom: 14px">
+            <span class="label-ios">الهاتف</span
+            ><input
+              class="input-ios"
+              type="text"
+              name="phone"
+              value="{{ profile.phone if profile else '' }}"
+            />
+          </div>
+          <div style="margin-bottom: 14px">
+            <span class="label-ios">المدينة</span
+            ><input
+              class="input-ios"
+              type="text"
+              name="city"
+              value="{{ profile.location if profile else '' }}"
+            />
+          </div>
+          <div style="margin-bottom: 14px">
+            <span class="label-ios">المهارات</span
+            ><input
+              class="input-ios"
+              type="text"
+              name="skills"
+              value="{{ profile.skills|join(', ') if profile and profile.skills else '' }}"
+            />
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">حفظ</button>
+        </form>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom: 14px">طلباتي</h3>
+        {% if applications %}{% for app in applications %}
+        <div class="list-row">
+          <div class="info">
+            <strong>{{ app.title }}</strong><span>{{ app.company_name }}</span>
+          </div>
+          <span
+            class="badge {% if app.status == 'pending' %}badge-orange{% elif app.status == 'accepted' %}badge-green{% else %}badge-red{% endif %}"
+            >{% if app.status == 'pending' %}قيد الانتظار{% elif app.status ==
+            'accepted' %}مقبول{% else %}مرفوض{% endif %}</span
+          >
+        </div>
+        {% endfor %}{% else %}
+        <p style="color: var(--text3); text-align: center">لا توجد طلبات</p>
+        {% endif %}
+      </div>
+      {% else %} {% if companies %}
+      <div class="grid-3" style="margin-bottom: 10px">
+        <div class="card stat-mini">
+          <div class="num">{{ jobs|length if jobs else 0 }}</div>
+          <div class="lbl">وظائف</div>
+        </div>
+        <div class="card stat-mini">
+          <div class="num">
+            {{ jobs|sum(attribute='applicant_count') if jobs else 0 }}
+          </div>
+          <div class="lbl">متقدمين</div>
+        </div>
+        <div class="card stat-mini">
+          <div class="num">{{ companies|length }}</div>
+          <div class="lbl">شركات</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom: 14px">نشر وظيفة</h3>
+        <form action="/post-job" method="POST">
+          <div style="margin-bottom: 14px">
+            <span class="label-ios">الشركة</span
+            ><select class="input-ios" name="company_id">
+              {% for c in companies %}
+              <option value="{{ c.id }}">{{ c.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div style="margin-bottom: 14px">
+            <span class="label-ios">العنوان</span
+            ><input class="input-ios" type="text" name="title" required />
+          </div>
+          <div style="margin-bottom: 14px">
+            <span class="label-ios">الراتب</span
+            ><input class="input-ios" type="text" name="salary" />
+          </div>
+          <div style="margin-bottom: 14px">
+            <span class="label-ios">الموقع</span
+            ><input class="input-ios" type="text" name="location" required />
+          </div>
+          <div style="margin-bottom: 14px">
+            <span class="label-ios">الدوام</span
+            ><select class="input-ios" name="job_type">
+              <option value="full_time">كامل</option>
+              <option value="part_time">جزئي</option>
+              <option value="remote">عن بعد</option>
+            </select>
+          </div>
+          <div style="margin-bottom: 14px">
+            <span class="label-ios">الوصف</span
+            ><textarea
+              class="input-ios"
+              name="description"
+              rows="2"
+              required
+            ></textarea>
+          </div>
+          <button type="submit" class="btn btn-success btn-block">نشر</button>
+        </form>
+      </div>
+      <div class="card">
+        <h3 style="margin-bottom: 14px">وظائفي</h3>
+        {% if jobs %}{% for job in jobs %}
+        <div class="list-row">
+          <div class="info">
+            <strong>{{ job.title }}</strong
+            ><span>{{ job.applicant_count }} متقدم</span>
+          </div>
+          <div class="actions">
+            <span
+              class="badge {% if job.is_active %}badge-green{% else %}badge-red{% endif %}"
+              >{% if job.is_active %}نشطة{% else %}مغلقة{% endif %}</span
+            ><a href="/applicants/{{ job.id }}" class="btn btn-ghost btn-xs"
+              >متقدمين</a
+            >{% if job.is_active %}<a
+              href="/job/{{ job.id }}/close"
+              class="btn btn-warning btn-xs"
+              >اغلاق</a
+            >{% else %}<a
+              href="/job/{{ job.id }}/open"
+              class="btn btn-primary btn-xs"
+              >فتح</a
+            >{% endif %}<a
+              href="/job/{{ job.id }}/delete"
+              class="btn btn-danger btn-xs"
+              >حذف</a
+            >
+          </div>
+        </div>
+        {% endfor %}{% else %}
+        <p style="color: var(--text3); text-align: center">لا توجد وظائف</p>
+        {% endif %}
+      </div>
+      {% else %}
+      <div class="card" style="text-align: center; padding: 30px">
+        <p style="font-size: 17px; margin-bottom: 14px">ليس لديك شركة بعد</p>
+        <a href="/create-company" class="btn btn-primary">انشاء شركة</a>
+      </div>
+      {% endif %} {% endif %} {% endif %} {% if page == 'applicants' %}
+      <a
+        href="/dashboard"
+        style="color: var(--blue); font-size: 14px; text-decoration: none"
+        >العودة</a
+      >
+      <div class="section-title">المتقدمين: {{ job.title }}</div>
+      <div class="card">
+        {% if applicants %}{% for app in applicants %}
+        <div class="list-row">
+          <div class="info">
+            <strong>{{ app.full_name }}</strong><span>{{ app.email }}</span>
+          </div>
+          <div class="actions">
+            <span
+              class="badge {% if app.status == 'pending' %}badge-orange{% elif app.status == 'accepted' %}badge-green{% else %}badge-red{% endif %}"
+              >{{ app.status }}</span
+            >{% if app.status == 'pending' %}
+            <form
+              action="/application/{{ app.id }}/accepted"
+              method="POST"
+              style="display: inline"
+            >
+              <button class="btn btn-success btn-xs">قبول</button>
+            </form>
+            <form
+              action="/application/{{ app.id }}/rejected"
+              method="POST"
+              style="display: inline"
+            >
+              <button class="btn btn-danger btn-xs">رفض</button>
+            </form>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}{% else %}
+        <p style="text-align: center; color: var(--text3)">لا متقدمين</p>
+        {% endif %}
+      </div>
+      {% endif %} {% if page == 'pricing' %}
+      <div class="section-title" style="text-align: center">
+        باقات اصحاب العمل
+      </div>
+      <div class="grid-3">
+        <div class="card" style="text-align: center">
+          <i
+            class="fa-solid fa-gift"
+            style="font-size: 30px; color: var(--green)"
+          ></i>
+          <h3>مجانية</h3>
+          <div
+            class="num"
+            style="font-size: 30px; font-weight: 900; margin: 10px 0"
+          >
+            0$
+          </div>
+          <ul
+            style="
+              list-style: none;
+              padding: 0;
+              font-size: 13px;
+              color: var(--text3);
+            "
+          >
+            <li>وظيفة واحدة</li>
+            <li>دعم اساسي</li>
+          </ul>
+          <button class="btn btn-ghost btn-block btn-sm" disabled>
+            الحالية
+          </button>
+        </div>
+        <div
+          class="card"
+          style="text-align: center; border: 2px solid var(--green)"
+        >
+          <i
+            class="fa-solid fa-rocket"
+            style="font-size: 30px; color: var(--green)"
+          ></i>
+          <h3>برو</h3>
+          <div
+            class="num"
+            style="font-size: 30px; font-weight: 900; margin: 10px 0"
+          >
+            25,000 د.ع
+          </div>
+          <ul
+            style="
+              list-style: none;
+              padding: 0;
+              font-size: 13px;
+              color: var(--text3);
+            "
+          >
+            <li>10 وظائف</li>
+            <li>دعم مخصص</li>
+          </ul>
+          <button class="btn btn-primary btn-block btn-sm">اشترك</button>
+        </div>
+        <div
+          class="card"
+          style="text-align: center; background: #1c1c1e; color: white"
+        >
+          <i
+            class="fa-solid fa-crown"
+            style="font-size: 30px; color: #fbbf24"
+          ></i>
+          <h3 style="color: #fbbf24">VIP</h3>
+          <div
+            class="num"
+            style="
+              font-size: 30px;
+              font-weight: 900;
+              margin: 10px 0;
+              color: #fbbf24;
+            "
+          >
+            250,000 د.ع
+          </div>
+          <ul
+            style="list-style: none; padding: 0; font-size: 13px; color: #ccc"
+          >
+            <li>غير محدود</li>
+            <li>ترويج كامل</li>
+          </ul>
+          <button class="btn btn-warning btn-block btn-sm">اشترك VIP</button>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    {% if session.get('user_id') %}
+    <div class="tab-bar">
+      <a href="/" class="tab-item {% if page == 'home' %}active{% endif %}"
+        ><i class="fa-solid fa-house"></i><span>الرئيسية</span></a
+      >
+      <a href="/jobs" class="tab-item {% if page == 'jobs' %}active{% endif %}"
+        ><i class="fa-solid fa-magnifying-glass"></i><span>الوظائف</span></a
+      >
+      <a
+        href="/dashboard"
+        class="tab-item {% if page == 'dashboard' %}active{% endif %}"
+        ><i class="fa-solid fa-chart-pie"></i><span>لوحة التحكم</span></a
+      >
+      <a href="/logout" class="tab-item"
+        ><i class="fa-solid fa-right-from-bracket"></i><span>خروج</span></a
+      >
+    </div>
+    {% else %}
+    <div class="tab-bar">
+      <a href="/" class="tab-item {% if page == 'home' %}active{% endif %}"
+        ><i class="fa-solid fa-house"></i><span>الرئيسية</span></a
+      >
+      <a href="/jobs" class="tab-item {% if page == 'jobs' %}active{% endif %}"
+        ><i class="fa-solid fa-magnifying-glass"></i><span>الوظائف</span></a
+      >
+      <a href="/login" class="tab-item"
+        ><i class="fa-solid fa-key"></i><span>دخول</span></a
+      >
+      <a href="/register" class="tab-item"
+        ><i class="fa-solid fa-person-add"></i><span>تسجيل</span></a
+      >
+    </div>
+    {% endif %}
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script>
+      const socket = io();
+      socket.on("notification", (d) => {
+        showToast(d.message, d.type === "accepted" ? "#34c759" : "#ff3b30");
+        updateNotifCount();
+      });
+      socket.on("new_applicant", (d) => {
+        showToast(d.message, "#007aff");
+        updateNotifCount();
+      });
+
+      function showToast(m, c) {
+        const t = document.createElement("div");
+        t.style.cssText = `position:fixed;top:20px;left:50%;transform:translateX(-50%);background:${c};color:white;padding:14px 24px;border-radius:30px;font-weight:700;z-index:9999;font-size:14px;animation:slideDown 0.4s ease;`;
+        t.textContent = m;
+        document.body.appendChild(t);
+        setTimeout(() => {
+          t.style.opacity = "0";
+          t.style.transition = "opacity 0.3s";
+          setTimeout(() => t.remove(), 300);
+        }, 3000);
+      }
+
+      function toggleSheet() {
+        document.getElementById("notif-sheet").classList.toggle("show");
+        document.getElementById("sheet-overlay").classList.toggle("show");
+        if (document.getElementById("notif-sheet").classList.contains("show"))
+          loadNotifs();
+      }
+      function closeSheet() {
+        document.getElementById("notif-sheet").classList.remove("show");
+        document.getElementById("sheet-overlay").classList.remove("show");
+      }
+
+      async function loadNotifs() {
+        try {
+          const r = await fetch("/api/notifications");
+          const n = await r.json();
+          const c = document.getElementById("notif-list");
+          c.innerHTML =
+            n.length > 0
+              ? n
+                  .map(
+                    (x) =>
+                      `<div class="list-row"><div class="info"><strong>${x.message}</strong><span>${new Date(x.created_at).toLocaleString("ar-IQ")}</span></div></div>`,
+                  )
+                  .join("")
+              : '<p style="text-align:center;">لا توجد اشعارات</p>';
+        } catch (e) {}
+      }
+
+      async function updateNotifCount() {
+        try {
+          const r = await fetch("/api/notifications/count");
+          const d = await r.json();
+          const b = document.getElementById("notif-badge");
+          if (b) {
+            b.textContent = d.count;
+            b.style.display = d.count > 0 ? "flex" : "none";
+          }
+        } catch (e) {}
+      }
+
+      async function markAllRead() {
+        await fetch("/api/notifications/read-all", { method: "POST" });
+        loadNotifs();
+        updateNotifCount();
+      }
+
+      document.addEventListener("DOMContentLoaded", updateNotifCount);
+    </script>
+    <style>
+      @keyframes slideDown {
+        from {
+          transform: translateX(-50%) translateY(-40px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(-50%) translateY(0);
+          opacity: 1;
+        }
+      }
+    </style>
+  </body>
+</html>
