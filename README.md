@@ -1,0 +1,287 @@
+# مهنة - Mehna
+
+**منصة التوظيف العراقية** | Iraqi Job Platform
+
+[![Python](https://img.shields.io/badge/Python-3.8+-blue?logo=python)](https://python.org)
+[![Flask](https://img.shields.io/badge/Flask-3.x-green?logo=flask)](https://flask.palletsprojects.com)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-336791?logo=postgresql)](https://www.postgresql.org)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](#license)
+
+<div dir="rtl">
+
+## نظرة عامة
+
+**مهنة** هي منصة توظيف عراقية تربط أصحاب العمل بالباحثين عن عمل. توفر المنصة نظاماً كاملاً لإدارة الوظائف والتقديمات مع لوحة تحكم إدارية ونظام توثيق شركات.
+
+</div>
+
+---
+
+## المميزات / Features
+
+### للباحثين عن عمل (Job Seekers)
+- إنشاء حساب مجاني وসম্পূর্ণ الملف الشخصي
+- تصفح الوظائف المتاحة مع فلترة حسب الموقع والراتب
+- التقديم على الوظائف بضغطة زر
+- تتبع حالة التقديمات (مقبول / مرفوض / قيد المراجعة)
+- استلام إشعارات فورية عند تحديث حالة التقديم
+
+### لأصحاب العمل (Employers)
+- إنشاء حساب شركة
+- طلب توثيق الشركة من الإدارة
+- نشر الوظائف وإدارتها
+- استقبال ومراجعة طلبات التوظيف
+- قبول أو رفض المتقدمين
+- إشعارات فورية عند تقديم متقدم جديد
+- إدارة باقة الاشتراك
+
+### للإدارة (Admin)
+- لوحة تحكم شاملة بإحصائيات المنصة
+- مراجعة طلبات توثيق الشركات (قبول / رفض)
+- إدارة المستخدمين (تفعيل / تعطيل / جعل أدمن)
+- عرض تفاصيل الشركات والوظائف
+- إحصائيات متقدمة
+
+### مميزات تقنية
+- إشعارات فورية عبر WebSocket (Socket.IO)
+- نظام CSRF protection كامل
+- Rate limiting على تسجيل الدخول والتقديمات
+- أمان متعدد الطبقات (Security Headers, XSS Protection)
+- تصميم متجاوب (Responsive) يدعم الجوال
+- واجهة عربية (RTL) بالكامل
+- دعم Cloudflare Tunnel للنشر العام
+
+---
+
+## المتطلبات / Prerequisites
+
+- Python 3.8 أو أعلى
+- PostgreSQL 14 أو أعلى
+- pip (مدير الحزم)
+
+---
+
+## التثبيت والتشغيل / Installation & Setup
+
+### 1. استنساخ المستودع
+
+```bash
+git clone https://github.com/yourusername/mehna.git
+cd mehna
+```
+
+### 2. إعداد قاعدة البيانات
+
+```bash
+# إنشاء قاعدة البيانات
+psql -U postgres -c "CREATE DATABASE mehna_db;"
+```
+
+### 3. تثبيت المكتبات
+
+```bash
+pip install flask flask-socketio psycopg2-binary werkzeug itsdangerous
+```
+
+أو باستخدام ملف المتطلبات:
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. تشغيل التطبيق
+
+```bash
+python app.py
+```
+
+سيتم تشغيل التطبيق على:
+```
+http://127.0.0.1:5000
+```
+
+### 5. بيانات الدخول التجريبية
+
+| الدور | البريد الإلكتروني | كلمة المرور |
+|-------|-------------------|-------------|
+| صاحب عمل (Admin) | employer@mehna.com | 123456 |
+| باحث عن عمل | seeker@mehna.com | 123456 |
+
+---
+
+## هيكل المشروع / Project Structure
+
+```
+mehna/
+├── app.py                 # التطبيق الرئيسي (1081 سطر)
+├── templates/
+│   └── index.html         # القالب الرئيسي (جميع الصفحات)
+├── static/
+│   └── logo.png           # شعار التطبيق
+├── SKILLS/
+│   └── summary-skill.md   # وثائق مسح المستودع
+├── docs/
+│   └── directory-layout/  # توثيق هيكل المجلدات
+├── run time/              # ملفات التشغيل
+├── .gitignore
+└── .gitattributes
+```
+
+---
+
+## هيكل قاعدة البيانات / Database Schema
+
+### جدول المستخدمين (users)
+| العمود | النوع | الوصف |
+|--------|-------|-------|
+| id | SERIAL PK | المعرف الفريد |
+| email | VARCHAR UNIQUE | البريد الإلكتروني |
+| password_hash | VARCHAR | كلمة المرور المشفرة |
+| full_name | VARCHAR | الاسم الكامل |
+| user_type | VARCHAR | نوع المستخدم (employer/job_seeker) |
+| is_admin | BOOLEAN | هل هو مدير |
+| is_active | BOOLEAN | هل الحساب مفعل |
+| plan | VARCHAR | الباقة الحالية (free/pro) |
+| jobs_posted_this_month | INTEGER | عدد الوظائف المنشورة هذا الشهر |
+| created_at | TIMESTAMP | تاريخ الإنشاء |
+
+### جدول البروفايلات (profiles)
+| العمود | النوع | الوصف |
+|--------|-------|-------|
+| user_id | INTEGER FK | معرف المستخدم |
+| phone | VARCHAR | رقم الهاتف |
+| location | VARCHAR | الموقع |
+| bio | TEXT | نبذة شخصية |
+| skills | TEXT[] | المهارات |
+
+### جدول الشركات (companies)
+| العمود | النوع | الوصف |
+|--------|-------|-------|
+| id | SERIAL PK | معرف الشركة |
+| name | VARCHAR | اسم الشركة |
+| description | VARCHAR | وصف الشركة |
+| website | VARCHAR | الموقع الإلكتروني |
+| location | VARCHAR | الموقع |
+| verification_status | VARCHAR | حالة التوثيق (pending/verified/rejected) |
+| verification_documents | TEXT | مستندات التوثيق |
+| verified_at | TIMESTAMP | تاريخ التوثيق |
+
+### جدول الوظائف (jobs)
+| العمود | النوع | الوصف |
+|--------|-------|-------|
+| id | SERIAL PK | معرف الوظيفة |
+| employer_id | INTEGER FK | معرف صاحب العمل |
+| company_id | INTEGER FK | معرف الشركة |
+| title | VARCHAR | عنوان الوظيفة |
+| description | TEXT | وصف الوظيفة |
+| salary_range | VARCHAR | نطاق الراتب |
+| location | VARCHAR | الموقع |
+| job_type | VARCHAR | نوع الوظيفة |
+| is_active | BOOLEAN | هل الوظيفة نشطة |
+| views_count | INTEGER | عدد المشاهدات |
+| created_at | TIMESTAMP | تاريخ النشر |
+
+### جدول التقديمات (applications)
+| العمود | النوع | الوصف |
+|--------|-------|-------|
+| id | SERIAL PK | معرف التقديم |
+| job_id | INTEGER FK | معرف الوظيفة |
+| job_seeker_id | INTEGER FK | معرف الباحث |
+| status | VARCHAR | الحالة (pending/accepted/rejected) |
+| reviewed_by | INTEGER FK | تمت المراجعة بواسطة |
+| reviewed_at | TIMESTAMP | تاريخ المراجعة |
+
+### جدول الإشعارات (notifications)
+| العمود | النوع | الوصف |
+|--------|-------|-------|
+| id | SERIAL PK | معرف الإشعار |
+| user_id | INTEGER FK | معرف المستخدم |
+| message | TEXT | رسالة الإشعار |
+| is_read | BOOLEAN | هل تم قراءته |
+| created_at | TIMESTAMP | تاريخ الإنشاء |
+
+---
+
+## API endpoints
+
+### إشعارات
+| Endpoint | Method | الوصف |
+|----------|--------|-------|
+| `/api/notifications` | GET | جلب الإشعارات |
+| `/api/notifications/count` | GET | عدد الإشعارات غير المقروءة |
+| `/api/notifications/read-all` | POST | تحديد الكل كمقروء |
+
+### التقديمات
+| Endpoint | Method | الوصف |
+|----------|--------|-------|
+| `/api/applications/count` | GET | عدد التقديمات المعلقة |
+
+---
+
+## الأمان / Security
+
+- **CSRF Protection:** جميع الطلبات POST/PUT/DELETE تتطلب CSRF token
+- **Rate Limiting:** حد أقصى 5 محاولات تسجيل دخول كل 5 دقائق
+- **XSS Protection:** تنظيف جميع المدخلات وإضافة headers أمان
+- **Session Security:** cookies آمنة مع SameSite=Lax
+- **Password Hashing:** باستخدام Werkzeug (PBKDF2)
+- **Security Headers:** HSTS, CSP, X-Frame-Options
+
+---
+
+## باقات الاشتراك / Subscription Plans
+
+| الباقة | الحد الأقصى للوظائف | الحد الأقصى للتقديمات | السعر |
+|--------|---------------------|----------------------|-------|
+| المجانية (Free) | 1 وظيفة | 10 تقديمات | مجاني |
+| البرو (Pro) | 10 وظائف | 100 تقديم | 25,000 د.ع |
+
+---
+
+## تقنيات الاستخدام / Built With
+
+- **[Flask](https://flask.palletsprojects.com/)** - إطار عمل الويب
+- **[Flask-SocketIO](https://flask-socketio.readthedocs.io/)** - إشعارات فورية
+- **[PostgreSQL](https://www.postgresql.org/)** - قاعدة البيانات
+- **[psycopg2](https://www.psycopg.org/)** - محرك PostgreSQL
+- **[Werkzeug](https://werkzeug.palletsprojects.com/)** - أمان كلمات المرور
+- **[itsdangerous](https://itsdangerous.palletsprojects.com/)** - توقيع التوكنات
+- **[Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/)** - النشر العام
+
+---
+
+## المساهمة / Contributing
+
+1. forks المستودع
+2. إنشاء فرع جديد (`git checkout -b feature/اسم-الميزة`)
+3. عمل commit للتغييرات (`git commit -m 'إضافة ميزة جديدة'`)
+4. رفع الفرع (`git push origin feature/اسم-الميزة`)
+5. فتح Pull Request
+
+---
+
+## الترخيص / License
+
+هذا المشروع مرخص بموجب MIT License - راجع ملف [LICENSE](LICENSE) للتفاصيل.
+
+---
+
+## التواصل / Contact
+
+- **المطور:** [اسمك]
+- **البريد الإلكتروني:** [بريدك الإلكتروني]
+- **GitHub:** [رابط المستودع]
+
+---
+
+<div dir="rtl">
+
+## ملاحظات تقنية مهمة
+
+1. **لا يوجد ملف requirements.txt** - يجب إنشاؤه قبل النشر
+2. **بيانات الدخول التجريبية** تُنشأ تلقائياً عند أول تشغيل
+3. **Cloudflare Tunnel** يستخدم للنشر العام (يجب تثبيت cloudflared أولاً)
+4. **قاعدة البيانات** يجب إنشاؤها يدوياً قبل التشغيل
+5. **الملفات المخفية** مثل `.env` يجب عدم رفعها للمستودع
+
+</div>
