@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="section-header">🛡️ لوحة تحكم الأدمن</h2>
+    
+    <div style="display:flex;gap:10px;justify-content:center;margin-bottom:30px;flex-wrap:wrap;">
+        <a href="/admin/dashboard" class="btn btn-primary btn-sm">📊 لوحة التحكم الكاملة</a>
+        <a href="/admin/users" class="btn btn-primary btn-sm">👥 إدارة المستخدمين</a>
+        <a href="/admin/companies" class="btn btn-primary btn-sm">🏢 إدارة الشركات</a>
+        <a href="/admin/stats" class="btn btn-primary btn-sm">📊 إحصائيات متقدمة</a>
+    </div>
+    
+    <div class="steps" style="margin-bottom:40px;grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
+        <div class="step">
+            <div class="icon" style="background:rgba(255,138,0,0.1);color:var(--primary);">
+                <i class="fa-solid fa-users"></i>
+            </div>
+            <h3>{{ stats.users }}</h3>
+            <p>مستخدم</p>
+        </div>
+        <div class="step">
+            <div class="icon" style="background:rgba(52,199,89,0.1);color:var(--green);">
+                <i class="fa-solid fa-briefcase"></i>
+            </div>
+            <h3>{{ stats.jobs }}</h3>
+            <p>وظيفة نشطة</p>
+        </div>
+        <div class="step">
+            <div class="icon" style="background:rgba(255,59,48,0.1);color:var(--red);">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <h3>{{ stats.pending }}</h3>
+            <p>بانتظار التوثيق</p>
+        </div>
+        <div class="step">
+            <div class="icon" style="background:rgba(255,138,0,0.1);color:var(--primary);">
+                <i class="fa-solid fa-building"></i>
+            </div>
+            <h3>{{ stats.companies }}</h3>
+            <p>شركة مسجلة</p>
+        </div>
+    </div>
+
+    <div class="form-card" style="max-width:100%;">
+        <h3 class="mb-2">🚧 طلبات التوثيق المعلقة</h3>
+        {% if pending_companies %}
+            {% for c in pending_companies %}
+                <div class="admin-card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">
+                    <div>
+                        <strong>{{ c.name }}</strong>
+                        <p style="font-size:12px;color:var(--gray-dark);margin-top:4px;">
+                            {{ c.verification_documents[:200] if c.verification_documents else 'لا توجد وثائق' }}...
+                        </p>
+                        <span style="font-size:11px;color:var(--gray-dark);">{{ c.location }} | {{ c.created_at.strftime('%Y-%m-%d') if c.created_at else '---' }}</span>
+                    </div>
+                    <div style="display:flex;gap:6px;">
+                        <a href="/admin/verify-company/{{ c.id }}" class="btn btn-primary btn-sm">✅ قبول</a>
+                        <a href="/admin/reject-company/{{ c.id }}" class="btn btn-danger btn-sm">❌ رفض</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-center text-muted">📭 لا توجد طلبات معلقة</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

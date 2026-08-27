@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-card">
+    <h2>تسجيل الدخول</h2>
+    <form method="POST" id="login-form" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-group">
+            <label>البريد الإلكتروني</label>
+            <input class="input input-ltr" type="email" name="email" id="login-email" placeholder="example@email.com" required dir="ltr">
+            <span class="error-msg" id="login-email-error"></span>
+        </div>
+        <div class="form-group">
+            <label>كلمة المرور</label>
+            <div class="password-wrapper">
+                <input class="input input-ltr" type="password" name="password" id="login-password" placeholder="--------" required dir="ltr">
+                <button type="button" class="password-toggle" onclick="togglePassword('login-password',this)">
+                    <i class="fa-solid fa-eye"></i>
+                </button>
+            </div>
+            <span class="error-msg" id="login-password-error"></span>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="login-submit-btn">دخول</button>
+    </form>
+    <p class="text-center mt-2">
+        <a href="/forgot-password" style="color:var(--gray-dark);font-size:13px;">نسيت كلمة المرور؟</a>
+    </p>
+    <p class="text-center text-muted mt-2" style="font-size:13px;">
+        باحث: seeker@mehna.com / 123456 | صاحب عمل: employer@mehna.com / 123456
+    </p>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById("login-form")?.addEventListener("submit", function () {
+    setBtnLoading("login-submit-btn", "جاري الدخول...");
+});
+</script>
+{% endblock %}

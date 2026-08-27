@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="section-header" style="margin-bottom:20px;">اهلا، {{ session.user_name }}</h2>
+    
+    {% if session.get('user_role') == 'job_seeker' %}
+        <div class="form-card">
+            <h3 class="mb-2">ملفي الشخصي</h3>
+            <form action="/update-profile" method="POST" id="update-profile-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="form-group">
+                    <label>الهاتف</label>
+                    <input class="input input-ltr" type="text" name="phone" value="{{ profile.phone if profile else '' }}" dir="ltr">
+                </div>
+                <div class="form-group">
+                    <label>المدينة</label>
+                    <input class="input" type="text" name="city" value="{{ profile.location if profile else '' }}">
+                </div>
+                <div class="form-group">
+                    <label>نبذة</label>
+                    <textarea class="input" name="bio" rows="3">{{ profile.bio if profile else '' }}</textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">حفظ</button>
+            </form>
+        </div>
+        
+        {% if applications %}
+            <div class="form-card">
+                <h3 class="mb-2">طلباتي</h3>
+                {% for app in applications %}
+                    <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--gray-light);">
+                        <div>
+                            <strong>{{ app.title }}</strong>
+                            <br>
+                            <span class="text-muted">{{ app.company_name }}</span>
+                        </div>
+                        <span class="tag {% if app.status == 'pending' %}tag-type{% elif app.status == 'accepted' %}tag-salary{% else %}" style="background:rgba(255,59,48,0.1);color:var(--red);"{% endif %}>
+                            {% if app.status == 'pending' %}قيد الانتظار{% elif app.status == 'accepted' %}مقبول{% else %}مرفوض{% endif %}
+                        </span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% else %}
+        <!-- لوحة صاحب العمل -->
+        {% if my_company %}
+            <div class="form-card 
+                {% if my_company.verification_status == 'verified' %}company-status-verified
+                {% elif my_company.verification_status == 'pending' %}company-status-pending
+                {% else %}company-status-rejected{% endif %}">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div>
+                        <h3 class="mb-2">🏢 {{ my_company.name }}</h3>
+                        <span class="admin-badge 
+                            {% if my_company.verification_status == 'verified' %}company-badge-verified
+                            {% elif my_company.verification_status == 'pending' %}company-badge-pending
+                            {% else %}company-badge-rejected{% endif %}">
+                            {% if my_company.verification_status == 'verified' %}✅ موثقة
+                            {% elif my_company.verification_status == 'pending' %}⏳ قيد المراجعة
+                            {% else %}❌ مرفوضة{% endif %}
+                        </span>
+                    </div>
+                    <div style="display:flex;gap:8px;">
+                        <a href="/companies/edit/{{ my_company.id }}" class="btn btn-outline btn-sm">✏️ تعديل</a>
+                        <a href="/companies/delete/{{ my_company.id }}" class="btn btn-danger btn-sm" onclick="return confirm('هل انت متأكد من حذف الشركة؟')">🗑️ حذف</a>
+                    </div>
+                </div>
+                
+                {% if can_request_verification %}
+                    <div style="margin-top:12px;padding:12px;background:rgba(255,59,48,0.05);border-radius:12px;">
+                        <p style="font-size:13px;color:var(--gray-dark);">⚠️ شركتك غير موثقة. لا يمكنك نشر أكثر من وظيفة واحدة.</p>
+                        <a href="/companies/request-verification" class="btn btn-primary btn-sm mt-2">📝 طلب توثيق الشركة</a>
+                    </div>
+                {% elif my_company.verification_status == 'pending' %}
+                    <div style="margin-top:12px;padding:12px;background:rgba(255,149,0,0.1);border-radius:12px;">
+                        <p style="font-size:13px;color:var(--primary);">⏳ طلب التوثيق قيد المراجعة من قبل الإدارة</p>
+                    </div>
+                {% elif my_company.verification_status == 'verified' %}
+                    <div style="margin-top:12px;padding:12px;background:rgba(52,199,89,0.1);border-radius:12px;">
+                        <p style="font-size:13px;color:var(--green);">✅ شركتك موثقة. يمكنك نشر الوظائف بحرية.</p>
+                    </div>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="form-card text-center">
+                <p class="mb-2">ليس لديك شركة بعد</p>
+                <a href="/companies/create" class="btn btn-primary">انشاء شركة</a>
+            </div>
+        {% endif %}
+
+        <!-- نشر وظيفة -->
+        {% if my_company and my_company.verification_status == 'verified' %}
+            <div class="form-card">
+                <h3 class="mb-2">📝 نشر وظيفة</h3>
+                <form action="/jobs/post" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="form-group">
+                        <label>العنوان</label>
+                        <input class="input" type="text" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>الراتب</label>
+                        <input class="input" type="text" name="salary">
+                    </div>
+                    <div class="form-group">
+                        <label>الموقع</label>
+                        <input class="input" type="text" name="location" required>
+                    </div>
+                    <div class="form-group">
+                        <label>الدوام</label>
+                        <div class="select-wrapper">
+                            <select class="input" name="job_type">
+                                <option value="full_time">كامل</option>
+                                <option value="part_time">جزئي</option>
+                                <option value="remote">عن بعد</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>الوصف</label>
+                        <textarea class="input" name="description" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">نشر</button>
+                </form>
+            </div>
+        {% elif my_company %}
+            <div class="form-card" style="border:1px dashed var(--gray-light);">
+                <p class="text-center text-muted">🔒 قم بتوثيق الشركة لنشر المزيد من الوظائف</p>
+            </div>
+        {% endif %}
+
+        <!-- وظائفي -->
+        {% if jobs %}
+            <div class="form-card">
+                <h3 class="mb-2">💼 وظائفي</h3>
+                {% for job in jobs %}
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--gray-light);">
+                        <div><strong>{{ job.title }}</strong></div>
+                        <div style="display:flex;gap:6px;">
+                            <span class="tag {% if job.is_active %}tag-salary{% else %}" style="background:rgba(255,59,48,0.1);color:var(--red);"{% endif %}>
+                                {% if job.is_active %}نشطة{% else %}مغلقة{% endif %}
+                            </span>
+                            <a href="/jobs/{{ job.id }}/applicants" class="btn btn-ghost btn-sm" style="background:rgba(0,0,0,0.05);color:var(--dark);">متقدمين</a>
+                            {% if job.is_active %}
+                                <a href="/jobs/{{ job.id }}/close" class="btn btn-ghost btn-sm" style="background:rgba(0,0,0,0.05);color:var(--dark);">اغلاق</a>
+                            {% else %}
+                                <a href="/jobs/{{ job.id }}/open" class="btn btn-ghost btn-sm" style="background:rgba(0,0,0,0.05);color:var(--dark);">فتح</a>
+                            {% endif %}
+                            <a href="#" class="btn btn-danger btn-sm" onclick="openDeleteModal(event,'/jobs/{{ job.id }}/delete')">حذف</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById("update-profile-form")?.addEventListener("submit", function (e) {
+    e.preventDefault();
+    fetch("/update-profile", {
+        method: "POST",
+        headers: { "X-CSRF-TOKEN": getCSRFToken() },
+        body: new FormData(this)
+    }).then(r => {
+        if (r.redirected) window.location.href = r.url;
+        else window.location.reload();
+    });
+});
+</script>
+{% endblock %}

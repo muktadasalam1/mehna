@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="form-card">
+        <h1 style="font-size:24px;">{{ job.title }}</h1>
+        <p style="color:var(--gray-dark);margin-bottom:16px;">{{ job.company_name }}</p>
+        
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+            <div style="text-align:center;padding:12px;background:rgba(0,0,0,0.03);border-radius:14px;">
+                <i class="fa-solid fa-location-dot" style="color:var(--primary);"></i>
+                <p style="font-size:12px;color:var(--gray-dark);">الموقع</p>
+                <strong>{{ job.location }}</strong>
+            </div>
+            <div style="text-align:center;padding:12px;background:rgba(0,0,0,0.03);border-radius:14px;">
+                <i class="fa-solid fa-dollar-sign" style="color:var(--primary);"></i>
+                <p style="font-size:12px;color:var(--gray-dark);">الراتب</p>
+                <strong>{{ job.salary_range }}</strong>
+            </div>
+        </div>
+        
+        <p style="line-height:1.8;">{{ job.description }}</p>
+        
+        {% if session.get('user_role') == 'job_seeker' %}
+            {% if applied %}
+                <div class="alert alert-success mt-2">تم التقديم مسبقا</div>
+            {% else %}
+                <form id="apply-form" data-job-id="{{ job.id }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-primary btn-block mt-2" id="apply-btn">التقديم الان</button>
+                </form>
+            {% endif %}
+        {% elif not session.get('user_id') %}
+            <a href="/login" class="btn btn-primary btn-block mt-2">سجل دخول للتقديم</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById("apply-form")?.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const jid = this.getAttribute("data-job-id");
+    const csrf = getCSRFToken();
+    const btn = document.getElementById("apply-btn");
+    if (!jid || !csrf) return;
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> جاري التقديم...';
+    }
+    fetch("/jobs/" + encodeURIComponent(jid) + "/apply", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRF-TOKEN": csrf
+        },
+        body: "csrf_token=" + encodeURIComponent(csrf)
+    }).then(r => {
+        if (r.redirected) window.location.href = r.url;
+        else window.location.reload();
+    }).catch(() => {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = "التقديم الان";
+        }
+    });
+});
+</script>
+{% endblock %}

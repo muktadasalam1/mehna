@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="form-card" style="max-width:100%;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <h2>🏢 {{ company.name }}</h2>
+            <a href="/admin/companies" class="btn btn-outline btn-sm">🔙 العودة</a>
+        </div>
+        
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">
+            <span class="admin-badge {% if company.verification_status == 'verified' %}admin-status-verified{% elif company.verification_status == 'pending' %}admin-status-pending{% else %}admin-status-rejected{% endif %}">
+                {% if company.verification_status == 'verified' %}✅ موثقة{% elif company.verification_status == 'pending' %}⏳ قيد المراجعة{% else %}❌ مرفوضة{% endif %}
+            </span>
+            <span class="admin-badge" style="background:rgba(68,68,68,0.08);color:var(--gray-dark);">📋 {{ company.jobs_count or 0 }} وظيفة</span>
+            <span class="admin-badge" style="background:rgba(255,138,0,0.1);color:var(--primary);">📝 {{ company.applications_count or 0 }} طلب</span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+            <div><strong>الموقع:</strong> {{ company.location or 'غير محدد' }}</div>
+            <div><strong>الصناعة:</strong> {{ company.industry or 'غير محدد' }}</div>
+            <div><strong>حجم الشركة:</strong> {{ company.size or 'غير محدد' }}</div>
+            <div><strong>الموقع الإلكتروني:</strong> {% if company.website %}<a href="{{ company.website }}" target="_blank">{{ company.website }}</a>{% else %}غير محدد{% endif %}</div>
+            <div><strong>تاريخ التسجيل:</strong> {{ company.created_at.strftime('%Y-%m-%d %H:%M') if company.created_at else '---' }}</div>
+            <div><strong>تاريخ التوثيق:</strong> {{ company.verified_at.strftime('%Y-%m-%d %H:%M') if company.verified_at else 'غير موثق' }}</div>
+        </div>
+
+        <div style="margin-bottom:20px;">
+            <strong>الوصف:</strong>
+            <p style="margin-top:8px;line-height:1.8;color:var(--gray-dark);">{{ company.description or 'لا يوجد وصف' }}</p>
+        </div>
+
+        {% if company.verification_documents %}
+            <div style="margin-bottom:20px;">
+                <strong>الوثائق:</strong>
+                <pre style="margin-top:8px;padding:12px;background:rgba(0,0,0,0.03);border-radius:8px;font-size:13px;white-space:pre-wrap;">{{ company.verification_documents }}</pre>
+            </div>
+        {% endif %}
+
+        {% if owner %}
+            <div style="margin-bottom:20px;">
+                <strong>المالك:</strong>
+                <div style="margin-top:8px;padding:12px;background:rgba(0,0,0,0.03);border-radius:8px;">
+                    <p><strong>الاسم:</strong> {{ owner.full_name }}</p>
+                    <p><strong>البريد:</strong> {{ owner.email }}</p>
+                    <p><strong>النوع:</strong> {% if owner.user_type == 'employer' %}صاحب عمل{% else %}باحث{% endif %}</p>
+                    <p><strong>أدمن:</strong> {% if owner.is_admin %}✅ نعم{% else %}❌ لا{% endif %}</p>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if jobs %}
+            <div>
+                <strong>الوظائف:</strong>
+                <div style="margin-top:8px;">
+                    {% for job in jobs %}
+                        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--gray-light);">
+                            <div>
+                                <strong>{{ job.title }}</strong>
+                                <br>
+                                <span style="font-size:12px;color:var(--gray-dark);">{{ job.location }} | {{ job.salary_range }}</span>
+                            </div>
+                            <span class="tag {% if job.is_active %}tag-salary{% else %}" style="background:rgba(255,59,48,0.1);color:var(--red);">{% if job.is_active %}نشطة{% else %}مغلقة{% endif %}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

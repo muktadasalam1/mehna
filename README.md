@@ -113,16 +113,82 @@ http://127.0.0.1:5000
 
 ```
 mehna/
-├── app.py                 # التطبيق الرئيسي (1081 سطر)
-├── templates/
-│   └── index.html         # القالب الرئيسي (جميع الصفحات)
-├── static/
-│   └── logo.png           # شعار التطبيق
-├── SKILLS/
-│   └── summary-skill.md   # وثائق مسح المستودع
-├── docs/
-│   └── directory-layout/  # توثيق هيكل المجلدات
-├── run time/              # ملفات التشغيل
+├── app.py                      # نقطة الدخول الرئيسية (App Factory)
+├── config.py                   # إعدادات التطبيق
+├── extensions.py               # مثيلات مشتركة (db, socketio, csrf)
+├── requirements.txt            # المتطلبات
+│
+├── models/                     # نماذج SQLAlchemy
+│   ├── __init__.py
+│   ├── user.py                 # نموذج المستخدم
+│   ├── profile.py              # نموذج البروفايل
+│   ├── company.py              # نموذج الشركة
+│   ├── job.py                  # نموذج الوظيفة
+│   ├── application.py          # نموذج التقديم
+│   └── notification.py         # نموذج الإشعار
+│
+├── routes/                     # مخططات Flask (Blueprints)
+│   ├── __init__.py
+│   ├── auth.py                 # مسارات المصادقة
+│   ├── jobs.py                 # مسارات الوظائف
+│   ├── companies.py            # مسارات الشركات
+│   ├── admin.py                # مسارات الإدارة
+│   ├── notifications.py        # مسارات API الإشعارات
+│   └── main.py                 # المسارات الرئيسية (الصفحة الرئيسية، لوحة التحكم)
+│
+├── services/                   # منطق الأعمال
+│   ├── __init__.py
+│   ├── auth_service.py         # خدمات المصادقة
+│   ├── job_service.py          # خدمات الوظائف
+│   ├── application_service.py  # خدمات التقديمات
+│   ├── company_service.py      # خدمات الشركات
+│   └── notification_service.py # خدمات الإشعارات
+│
+├── utils/                      # أدوات مساعدة
+│   ├── __init__.py
+│   ├── decorators.py           # декораторات (@login_required, @admin_required)
+│   ├── validators.py           # التحقق من المدخلات
+│   └── security.py             # الأمان (CSRF, Rate Limiting, Headers)
+│
+├── templates/                  # قوالب Jinja2
+│   ├── base.html               # القالب الأساسي
+│   ├── index_home.html         # الصفحة الرئيسية
+│   ├── index_jobs.html         # تصفح الوظائف
+│   ├── index_job.html          # تفاصيل الوظيفة
+│   ├── index_login.html        # تسجيل الدخول
+│   ├── index_register.html     # إنشاء حساب
+│   ├── index_forgot_password.html  # نسيت كلمة المرور
+│   ├── index_reset_password.html   # إعادة تعيين كلمة المرور
+│   ├── index_profile.html      # الملف الشخصي
+│   ├── index_dashboard.html    # لوحة التحكم
+│   ├── index_applicants.html   # المتقدمين
+│   ├── index_create_company.html   # إنشاء شركة
+│   ├── index_edit_company.html     # تعديل الشركة
+│   ├── index_pricing.html      # الباقات
+│   ├── index_about.html        # عن المنصة
+│   ├── index_admin.html        # لوحة تحكم الأدمن
+│   ├── index_admin_companies.html  # إدارة الشركات
+│   ├── index_admin_users.html      # إدارة المستخدمين
+│   ├── index_admin_stats.html      # الإحصائيات
+│   ├── index_admin_company_details.html  # تفاصيل الشركة
+│   ├── index_admin_dashboard_full.html   # لوحة التحكم الكاملة
+│   └── components/             # مكونات مشتركة
+│       ├── navbar.html         # شريط التنقل
+│       ├── footer.html         # التذييل
+│       └── job_card.html       # بطاقة الوظيفة
+│
+├── static/                     # ملفات ثابتة
+│   ├── css/
+│   │   └── base.css            # الأنماط الأساسية
+│   ├── js/
+│   │   ├── socket-client.js    # إعداد WebSocket
+│   │   └── notifications.js    # إشعارات
+│   └── logo.png                # شعار التطبيق
+│
+├── SKILLS/                     # وثائق المسح
+├── docs/                       # التوثيق
+├── run time/                   # ملفات التشغيل
+├── tests/                      # الاختبارات
 ├── .gitignore
 └── .gitattributes
 ```

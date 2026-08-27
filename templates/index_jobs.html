@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="section-header">
+        <h2>جميع الوظائف</h2>
+    </div>
+    <div class="jobs-grid">
+        {% if jobs %}
+            {% for job, company_name in jobs %}
+                {% include 'components/job_card.html' %}
+            {% endfor %}
+        {% else %}
+            <p class="text-center text-muted" style="grid-column:1/-1;">لا توجد وظائف</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

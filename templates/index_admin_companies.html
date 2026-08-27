@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="section-header">🏢 إدارة الشركات</h2>
+    <div class="form-card" style="max-width:100%;">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>اسم الشركة</th>
+                        <th>المالك</th>
+                        <th>البريد الإلكتروني</th>
+                        <th>الموقع</th>
+                        <th>الحالة</th>
+                        <th>الوظائف</th>
+                        <th>تاريخ التسجيل</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in companies %}
+                        <tr>
+                            <td><strong>{{ c.name }}</strong></td>
+                            <td>{{ c.owner_name or 'غير معروف' }}</td>
+                            <td>{{ c.owner_email or '---' }}</td>
+                            <td>{{ c.location or '---' }}</td>
+                            <td>
+                                {% if c.verification_status == 'verified' %}
+                                    <span class="status-verified">✅ موثقة</span>
+                                {% elif c.verification_status == 'pending' %}
+                                    <span class="status-pending">⏳ قيد المراجعة</span>
+                                {% else %}
+                                    <span class="status-rejected">❌ مرفوضة</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ c.jobs_count or 0 }}</td>
+                            <td style="font-size:12px;">{{ c.created_at.strftime('%Y-%m-%d') if c.created_at else '---' }}</td>
+                            <td>
+                                <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                                    <a href="/admin/company/{{ c.id }}/details" class="btn btn-sm btn-primary">📋 تفاصيل</a>
+                                    <a href="/admin/company/{{ c.id }}/delete" class="btn btn-danger btn-sm" onclick="return confirm('هل انت متأكد من حذف هذه الشركة؟ سيتم حذف جميع وظائفها أيضاً.')">🗑️ حذف</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if not companies %}
+            <p class="text-center text-muted">📭 لا توجد شركات مسجلة</p>
+        {% endif %}
+        <p class="text-center mt-2">
+            <a href="/admin" class="btn btn-outline btn-sm">🏠 العودة للوحة الرئيسية</a>
+        </p>
+    </div>
+</div>
+{% endblock %}
