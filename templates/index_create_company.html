@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="form-card" style="max-width:600px;">
+        <h2>انشاء شركة جديدة</h2>
+        <p class="text-muted text-center mb-2" style="font-size:13px;">يجب توثيق الشركة قبل نشر الوظائف</p>
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-group">
+                <label>اسم الشركة *</label>
+                <input class="input" type="text" name="company_name" required>
+            </div>
+            <div class="form-group">
+                <label>اسم المالك *</label>
+                <input class="input" type="text" name="owner_name" required>
+            </div>
+            <div class="form-group">
+                <label>رقم الهوية *</label>
+                <input class="input input-ltr" type="text" name="owner_id" required dir="ltr">
+            </div>
+            <div class="form-group">
+                <label>رقم الهاتف *</label>
+                <input class="input input-ltr" type="text" name="phone" required dir="ltr">
+            </div>
+            <div class="form-group">
+                <label>المدينة *</label>
+                <input class="input" type="text" name="location" placeholder="بغداد" required>
+            </div>
+            <div class="form-group">
+                <label>الموقع الإلكتروني</label>
+                <input class="input input-ltr" type="url" name="website" dir="ltr">
+            </div>
+            <div class="form-group">
+                <label>وصف الشركة</label>
+                <textarea class="input" name="description" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">تقديم طلب التوثيق</button>
+        </form>
+        <p class="text-center text-muted mt-2" style="font-size:12px;">* بعد تقديم الطلب، سيتم مراجعة بيانات الشركة من قبل الإدارة</p>
+    </div>
+</div>
+{% endblock %}

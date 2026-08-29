@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="text-center mb-2">
+        <h1 style="font-size:32px;">عن منصة مهنة</h1>
+        <p class="text-muted">منصة توظيف عراقية تربط الباحثين عن عمل بافضل الشركات</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;max-width:900px;margin:auto;">
+        <div class="form-card text-center">
+            <i class="fa-solid fa-eye" style="font-size:32px;color:var(--primary);margin-bottom:8px;"></i>
+            <h3>رؤيتنا</h3>
+            <p class="text-muted">المنصة الاولى للتوظيف في العراق</p>
+        </div>
+        <div class="form-card text-center">
+            <i class="fa-solid fa-bullseye" style="font-size:32px;color:var(--primary);margin-bottom:8px;"></i>
+            <h3>مهمتنا</h3>
+            <p class="text-muted">تسهيل عملية التوظيف للجميع</p>
+        </div>
+        <div class="form-card text-center">
+            <i class="fa-solid fa-handshake" style="font-size:32px;color:var(--primary);margin-bottom:8px;"></i>
+            <h3>قيمنا</h3>
+            <p class="text-muted">الشفافية، السرعة، والامان</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

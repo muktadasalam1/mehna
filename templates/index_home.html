@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h1>أفضل <span>الوظائف</span> في العراق</h1>
+        <p>منصة مهنة تربطك بأفضل الشركات. تصفح مئات الوظائف وقدم بضغطة زر.</p>
+        <div class="search-box">
+            <input type="text" placeholder="ابحث عن وظيفة..." id="hero-search" />
+            <button onclick="window.location.href='/jobs'">
+                <i class="fa-solid fa-magnifying-glass"></i> بحث
+            </button>
+        </div>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="num">{{ stats.jc }}</div>
+                <div class="lbl">وظيفة متاحة</div>
+            </div>
+            <div class="hero-stat">
+                <div class="num">{{ stats.cc }}</div>
+                <div class="lbl">شركة مسجلة</div>
+            </div>
+            <div class="hero-stat">
+                <div class="num">{{ stats.sc }}</div>
+                <div class="lbl">باحث عن عمل</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+    <div class="section-header">
+        <h2>أحدث الوظائف</h2>
+        <p>تصفح أحدث الفرص المنشورة على المنصة</p>
+        <a href="/jobs" class="view-all">عرض جميع الوظائف <i class="fa-solid fa-arrow-left"></i></a>
+    </div>
+    <div class="jobs-grid">
+        {% if jobs %}
+            {% for job, company_name in jobs %}
+                {% include 'components/job_card.html' %}
+            {% endfor %}
+        {% else %}
+            <p class="text-center text-muted" style="grid-column:1/-1;">لا توجد وظائف حالياً</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container">
+    <div class="section-header">
+        <h2>كيف تعمل المنصة؟</h2>
+        <p>ثلاث خطوات بسيطة للبدء</p>
+    </div>
+    <div class="steps">
+        <div class="step">
+            <div class="icon" style="background:rgba(255,138,0,0.1);color:var(--primary);">
+                <i class="fa-solid fa-user-plus"></i>
+            </div>
+            <h3>1. أنشئ حساب</h3>
+            <p>سجل مجاناً كباحث عن عمل أو صاحب شركة</p>
+        </div>
+        <div class="step">
+            <div class="icon" style="background:rgba(255,193,7,0.15);color:#b8860b;">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+            <h3>2. تصفح الوظائف</h3>
+            <p>ابحث عن الوظيفة المناسبة لمهاراتك وموقعك</p>
+        </div>
+        <div class="step">
+            <div class="icon" style="background:rgba(68,68,68,0.08);color:var(--gray-dark);">
+                <i class="fa-solid fa-paper-plane"></i>
+            </div>
+            <h3>3. قدم طلبك</h3>
+            <p>قدم على الوظيفة بضغطة زر وانتظر الرد</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

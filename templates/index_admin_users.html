@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="section-header">👥 إدارة المستخدمين</h2>
+    <div class="form-card" style="max-width:100%;">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>البريد</th>
+                        <th>الاسم</th>
+                        <th>النوع</th>
+                        <th>أدمن</th>
+                        <th>الحالة</th>
+                        <th>الوظائف</th>
+                        <th>تاريخ التسجيل</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                        <tr>
+                            <td>{{ u.email }}</td>
+                            <td>{{ u.full_name }}</td>
+                            <td>{% if u.user_type == 'employer' %}صاحب عمل{% else %}باحث{% endif %}</td>
+                            <td>{% if u.is_admin %}✅{% else %}❌{% endif %}</td>
+                            <td>{% if u.is_active %}🟢 نشط{% else %}🔴 معطل{% endif %}</td>
+                            <td>{{ u.jobs_count or 0 }}</td>
+                            <td style="font-size:12px;">{{ u.created_at.strftime('%Y-%m-%d') if u.created_at else '---' }}</td>
+                            <td>
+                                <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                                    <a href="/admin/user/{{ u.id }}/details" class="btn btn-sm btn-primary">📋 تفاصيل</a>
+                                    <a href="/admin/user/{{ u.id }}/toggle" class="btn btn-sm {% if u.is_active %}btn-danger{% else %}btn-primary{% endif %}">
+                                        {% if u.is_active %}تعطيل{% else %}تفعيل{% endif %}
+                                    </a>
+                                    {% if not u.is_admin %}
+                                        <a href="/admin/user/{{ u.id }}/make-admin" class="btn btn-sm btn-primary">جعل أدمن</a>
+                                    {% else %}
+                                        <a href="/admin/user/{{ u.id }}/remove-admin" class="btn btn-sm btn-danger" onclick="return confirm('هل انت متأكد من إزالة صلاحية الأدمن؟')">إزالة أدمن</a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <p class="text-center mt-2">
+            <a href="/admin" class="btn btn-outline btn-sm">🏠 العودة للوحة الرئيسية</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <a href="/dashboard" style="color:var(--primary);">العودة</a>
+    <h2 style="margin:12px 0;">المتقدمين: {{ job.title }}</h2>
+    <div class="form-card">
+        {% if applicants %}
+            {% for app in applicants %}
+                <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--gray-light);">
+                    <div>
+                        <strong>{{ app.full_name }}</strong>
+                        <br>
+                        <span class="text-muted">{{ app.email }}</span>
+                    </div>
+                    <div style="display:flex;gap:6px;align-items:center;">
+                        <span class="tag {% if app.status == 'pending' %}tag-type{% elif app.status == 'accepted' %}tag-salary{% else %}" style="background:rgba(255,59,48,0.1);color:var(--red);"{% endif %}">{{ app.status }}</span>
+                        {% if app.status == 'pending' %}
+                            <form action="/jobs/application/{{ app.id }}/accepted" method="POST" style="display:inline;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button class="btn btn-primary btn-sm">قبول</button>
+                            </form>
+                            <form action="/jobs/application/{{ app.id }}/rejected" method="POST" style="display:inline;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button class="btn btn-danger btn-sm">رفض</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-center text-muted">لا متقدمين</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

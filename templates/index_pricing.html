@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="section-header">
+        <h2>باقات اصحاب العمل</h2>
+        <p>اختر الباقة المناسبة لاحتياجاتك</p>
+    </div>
+    <div class="pricing-grid">
+        <div class="pricing-card-free">
+            <div class="pricing-icon-wrap">
+                <i class="fa-solid fa-gift"></i>
+            </div>
+            <h3>مجانية</h3>
+            <div class="pricing-price">0<span> د.ع</span></div>
+            <ul class="pricing-list">
+                <li><i class="fa-solid fa-check"></i> وظيفة واحدة تجريبية</li>
+                <li><i class="fa-solid fa-check"></i> 10 تقديمات</li>
+                <li><i class="fa-solid fa-check"></i> دعم اساسي</li>
+                <li class="disabled"><i class="fa-solid fa-xmark"></i> توثيق الشركة</li>
+                <li class="disabled"><i class="fa-solid fa-xmark"></i> وظائف غير محدودة</li>
+                <li class="disabled"><i class="fa-solid fa-xmark"></i> إحصائيات متقدمة</li>
+            </ul>
+            {% if session.get('user_id') %}
+                <button class="btn btn-ghost btn-block mt-2" disabled>✅ الباقة الحالية</button>
+            {% else %}
+                <a href="/register" class="btn btn-primary btn-block mt-2">سجل مجاناً للتفعيل</a>
+            {% endif %}
+        </div>
+        <div class="pricing-card-pro {% if plan_info.plan == 'pro' %}pricing-card-free{% else %}locked{% endif %}">
+            {% if plan_info.plan != 'pro' %}
+                <div class="pricing-lock-badge"><i class="fa-solid fa-lock"></i> اشترك الآن</div>
+            {% endif %}
+            <div class="pricing-icon-wrap">
+                <i class="fa-solid fa-rocket"></i>
+            </div>
+            <h3>برو</h3>
+            <div class="pricing-price">25,000<span> د.ع/شهرياً</span></div>
+            <ul class="pricing-list">
+                <li><i class="fa-solid fa-check"></i> ✅ توثيق الشركة</li>
+                <li><i class="fa-solid fa-check"></i> 10 وظائف شهرياً</li>
+                <li><i class="fa-solid fa-check"></i> 100 تقديم</li>
+                <li><i class="fa-solid fa-check"></i> دعم مخصص</li>
+                <li><i class="fa-solid fa-check"></i> وظائف مميزة</li>
+                <li><i class="fa-solid fa-check"></i> إحصائيات متقدمة</li>
+            </ul>
+            {% if plan_info.plan == 'pro' %}
+                <button class="btn btn-primary btn-block mt-2" disabled>✅ الباقة الحالية</button>
+            {% else %}
+                <a href="/upgrade-plan/pro" class="btn btn-primary btn-block mt-2">🚀 اشترك الآن</a>
+            {% endif %}
+            <p style="font-size:12px;color:var(--gray-dark);margin-top:8px;">* الدفع شهري، يمكنك الإلغاء في أي وقت</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

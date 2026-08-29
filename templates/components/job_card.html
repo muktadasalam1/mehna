@@ -1,0 +1,20 @@
+<a href="/jobs/{{ job.id }}" class="job-card">
+    <div class="company">
+        <div class="company-logo">{{ company_name[:1] }}</div>
+        <div class="company-info">
+            <span class="name">{{ company_name }}</span>
+        </div>
+    </div>
+    <h3>{{ job.title }}</h3>
+    <div class="tags">
+        <span class="tag tag-location">
+            <i class="fa-solid fa-location-dot"></i> {{ job.location }}
+        </span>
+        <span class="tag tag-salary">
+            <i class="fa-solid fa-dollar-sign"></i> {{ job.salary_range }}
+        </span>
+        {% if job.job_type %}
+            <span class="tag tag-type">{{ job.job_type }}</span>
+        {% endif %}
+    </div>
+</a>

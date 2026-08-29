@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="section-header">📊 إحصائيات متقدمة</h2>
+    <div class="steps" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
+        <div class="step">
+            <div class="icon" style="background:rgba(255,138,0,0.1);color:var(--primary);">
+                <i class="fa-solid fa-users"></i>
+            </div>
+            <h3>{{ stats.total_users }}</h3>
+            <p>إجمالي المستخدمين</p>
+        </div>
+        <div class="step">
+            <div class="icon" style="background:rgba(52,199,89,0.1);color:var(--green);">
+                <i class="fa-solid fa-building"></i>
+            </div>
+            <h3>{{ stats.total_employers }}</h3>
+            <p>أصحاب عمل</p>
+        </div>
+        <div class="step">
+            <div class="icon" style="background:rgba(255,193,7,0.15);color:#b8860b;">
+                <i class="fa-solid fa-user-tie"></i>
+            </div>
+            <h3>{{ stats.total_seekers }}</h3>
+            <p>باحثين عن عمل</p>
+        </div>
+        <div class="step">
+            <div class="icon" style="background:rgba(68,68,68,0.08);color:var(--gray-dark);">
+                <i class="fa-solid fa-briefcase"></i>
+            </div>
+            <h3>{{ stats.total_jobs }}</h3>
+            <p>إجمالي الوظائف</p>
+        </div>
+        <div class="step">
+            <div class="icon" style="background:rgba(52,199,89,0.1);color:var(--green);">
+                <i class="fa-solid fa-check-circle"></i>
+            </div>
+            <h3>{{ stats.active_jobs }}</h3>
+            <p>وظائف نشطة</p>
+        </div>
+        <div class="step">
+            <div class="icon" style="background:rgba(255,59,48,0.1);color:var(--red);">
+                <i class="fa-solid fa-file"></i>
+            </div>
+            <h3>{{ stats.total_apps }}</h3>
+            <p>طلبات توظيف</p>
+        </div>
+        <div class="step">
+            <div class="icon" style="background:rgba(255,138,0,0.1);color:var(--primary);">
+                <i class="fa-solid fa-building"></i>
+            </div>
+            <h3>{{ stats.total_companies }}</h3>
+            <p>إجمالي الشركات</p>
+        </div>
+        <div class="step">
+            <div class="icon" style="background:rgba(255,138,0,0.1);color:var(--primary);">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <h3>{{ stats.pending }}</h3>
+            <p>شركات بانتظار التوثيق</p>
+        </div>
+        <div class="step">
+            <div class="icon" style="background:rgba(52,199,89,0.1);color:var(--green);">
+                <i class="fa-solid fa-check-circle"></i>
+            </div>
+            <h3>{{ stats.verified }}</h3>
+            <p>شركات موثقة</p>
+        </div>
+        <div class="step">
+            <div class="icon" style="background:rgba(255,59,48,0.1);color:var(--red);">
+                <i class="fa-solid fa-times-circle"></i>
+            </div>
+            <h3>{{ stats.rejected }}</h3>
+            <p>شركات مرفوضة</p>
+        </div>
+    </div>
+
+    {% if stats.top_jobs %}
+        <div class="form-card" style="max-width:100%;margin-top:30px;">
+            <h3 class="mb-2">🏆 اكثر الوظائف مشاهدة</h3>
+            {% for job in stats.top_jobs %}
+                <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--gray-light);">
+                    <div><strong>{{ job.title }}</strong></div>
+                    <span class="tag tag-salary">{{ job.views_count }} مشاهدة</span>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <p class="text-center mt-2">
+        <a href="/admin" class="btn btn-outline btn-sm">🏠 العودة للوحة الرئيسية</a>
+    </p>
+</div>
+{% endblock %}

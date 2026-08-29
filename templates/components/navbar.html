@@ -1,0 +1,37 @@
+<nav class="navbar">
+    <a href="/" class="logo">
+        <img src="/static/logo.png" alt="مهنة" style="height:36px;width:auto;border-radius:8px;" />
+        <span>مهنة</span>
+    </a>
+    <ul class="nav-menu">
+        <li><a href="/" class="{% if page == 'home' %}active{% endif %}">الرئيسية</a></li>
+        <li><a href="/jobs" class="{% if page == 'jobs' %}active{% endif %}">تصفح الوظائف</a></li>
+        <li><a href="/pricing">الباقات</a></li>
+        <li><a href="/about">عن المنصة</a></li>
+    </ul>
+    <div class="nav-actions">
+        {% if session.get('user_id') %}
+            <div class="notif-btn" id="notif-btn">
+                <i class="fa-solid fa-bell"></i>
+                <span id="notif-badge" class="notif-badge">0</span>
+            </div>
+            <a href="/dashboard" class="btn btn-outline btn-sm">
+                <i class="fa-solid fa-chart-pie"></i> لوحة التحكم
+            </a>
+            <a href="/profile" class="btn btn-outline btn-sm">
+                <i class="fa-solid fa-user"></i> حسابي
+            </a>
+            {% if session.get('user_role') == 'admin' %}
+                <a href="/admin" class="btn btn-primary btn-sm">
+                    <i class="fa-solid fa-shield-halved"></i> لوحة الأدمن
+                </a>
+            {% endif %}
+            <a href="/logout" class="btn btn-primary btn-sm">
+                <i class="fa-solid fa-right-from-bracket"></i> خروج
+            </a>
+        {% else %}
+            <a href="/login" class="btn btn-outline btn-sm">دخول</a>
+            <a href="/register" class="btn btn-primary btn-sm">تسجيل</a>
+        {% endif %}
+    </div>
+</nav>
