@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from extensions import db, socketio, csrf
 from config import Config
@@ -122,5 +123,7 @@ def seed_data():
 
 if __name__ == '__main__':
     app = create_app()
-    socketio.run(app, debug=False, allow_unsafe_werkzeug=True)
-    print("Server: http://127.0.0.1:5000")
+    debug = os.environ.get('FLASK_DEBUG', '0') == '1'
+    port = int(os.environ.get('PORT', 5000))
+    print(f"Server: http://0.0.0.0:{port}")
+    socketio.run(app, host='0.0.0.0', port=port, debug=debug, allow_unsafe_werkzeug=True)
