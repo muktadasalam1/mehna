@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: mehna_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: mehna_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-123}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/01-init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d mehna_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - mehna-net
+
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: mehna_app
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://postgres:${DB_PASSWORD:-123}@db:5432/mehna_db
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
+      FLASK_DEBUG: ${FLASK_DEBUG:-0}
+    ports:
+      - "5000:5000"
+    volumes:
+      - ..:/app
+      - /app/venv
+      - /app/__pycache__
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - mehna-net
+
+volumes:
+  pgdata:
+
+networks:
+  mehna-net:
+    driver: bridge

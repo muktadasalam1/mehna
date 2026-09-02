@@ -5,6 +5,7 @@
 [![Python](https://img.shields.io/badge/Python-3.8+-blue?logo=python)](https://python.org)
 [![Flask](https://img.shields.io/badge/Flask-3.x-green?logo=flask)](https://flask.palletsprojects.com)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-336791?logo=postgresql)](https://www.postgresql.org)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)](https://www.docker.com)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](#license)
 
 <div dir="rtl">
@@ -55,6 +56,12 @@
 
 ## المتطلبات / Prerequisites
 
+### Docker (Recommended)
+
+- [Docker](https://docs.docker.com/get-docker/) + Docker Compose
+
+### Manual Setup
+
 - Python 3.8 أو أعلى
 - PostgreSQL 14 أو أعلى
 - pip (مدير الحزم)
@@ -63,33 +70,60 @@
 
 ## التثبيت والتشغيل / Installation & Setup
 
-### 1. استنساخ المستودع
+### Option A: Docker (Recommended)
+
+#### 1. استنساخ المستودع
 
 ```bash
 git clone https://github.com/yourusername/mehna.git
 cd mehna
 ```
 
-### 2. إعداد قاعدة البيانات
+#### 2. إنشاء ملف البيئة
+
+```bash
+cp .env.example .env
+```
+
+#### 3. تشغيل التطبيق
+
+```bash
+cd compose
+docker compose up -d --build
+```
+
+This starts the full stack (Flask + PostgreSQL). Access at:
+```
+http://localhost:5000
+```
+
+For detailed Docker commands and troubleshooting, see [`compose/README.md`](compose/README.md).
+
+---
+
+### Option B: Manual Setup
+
+#### 1. استنساخ المستودع
+
+```bash
+git clone https://github.com/yourusername/mehna.git
+cd mehna
+```
+
+#### 2. إعداد قاعدة البيانات
 
 ```bash
 # إنشاء قاعدة البيانات
 psql -U postgres -c "CREATE DATABASE mehna_db;"
 ```
 
-### 3. تثبيت المكتبات
-
-```bash
-pip install flask flask-socketio psycopg2-binary werkzeug itsdangerous
-```
-
-أو باستخدام ملف المتطلبات:
+#### 3. تثبيت المكتبات
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. تشغيل التطبيق
+#### 4. تشغيل التطبيق
 
 ```bash
 python app.py
@@ -100,7 +134,9 @@ python app.py
 http://127.0.0.1:5000
 ```
 
-### 5. بيانات الدخول التجريبية
+---
+
+### بيانات الدخول التجريبية / Demo Credentials
 
 | الدور | البريد الإلكتروني | كلمة المرور |
 |-------|-------------------|-------------|
@@ -117,6 +153,9 @@ mehna/
 ├── config.py                   # إعدادات التطبيق
 ├── extensions.py               # مثيلات مشتركة (db, socketio, csrf)
 ├── requirements.txt            # المتطلبات
+├── Dockerfile                  # تعريف حاوية Flask
+├── .dockerignore               # ملفات مستبعدة من Docker build
+├── .env.example                # نموذج متغيرات البيئة
 │
 ├── models/                     # نماذج SQLAlchemy
 │   ├── __init__.py
@@ -336,10 +375,9 @@ mehna/
 
 ## ملاحظات تقنية مهمة
 
-1. **لا يوجد ملف requirements.txt** - يجب إنشاؤه قبل النشر
+1. **Docker** هو الطريقة الموصى بها للتشغيل — يشغّل التطبيق + قاعدة البيانات في حاويات موحدة. راجع [`compose/README.md`](compose/README.md)
 2. **بيانات الدخول التجريبية** تُنشأ تلقائياً عند أول تشغيل
 3. **Cloudflare Tunnel** يستخدم للنشر العام (يجب تثبيت cloudflared أولاً)
-4. **قاعدة البيانات** يجب إنشاؤها يدوياً قبل التشغيل
-5. **الملفات المخفية** مثل `.env` يجب عدم رفعها للمستودع
+4. **الملفات المخفية** مثل `.env` يجب عدم رفعها للمستودع — راجع `.env.example`
 
 </div>

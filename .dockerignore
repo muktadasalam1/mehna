@@ -1,0 +1,19 @@
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.env
+.git/
+.gitignore
+.gitattributes
+.pytest_cache/
+SKILLS/
+docs/
+run time/
+tests/
+test_*.py
+*.exe
+*.md
+compose/
+cloudflared.exe
+تصاميم/
