@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="section-header">
+        <h2>الوظائف المحفوظة</h2>
+    </div>
+    <div class="jobs-grid">
+        {% if jobs %}
+            {% for job, company_name in jobs %}
+                {% include 'components/job_card.html' %}
+            {% endfor %}
+        {% else %}
+            <div class="text-center text-muted" style="grid-column:1/-1;padding:60px 0;">
+                <i class="fa-solid fa-bookmark" style="font-size:48px;color:var(--gray-light);margin-bottom:16px;display:block;"></i>
+                <p style="font-size:18px;margin-bottom:8px;">لا توجد وظائف محفوظة</p>
+                <p style="font-size:14px;">احفظ الوظائف التي تهمك للرجوع إليها لاحقاً</p>
+                <a href="/jobs" class="btn btn-primary mt-2">تصفح الوظائف</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

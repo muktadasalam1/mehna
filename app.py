@@ -1,6 +1,8 @@
 import os
-from flask import Flask
-from extensions import db, socketio, csrf
+import logging
+from datetime import datetime, timezone
+from flask import Flask, jsonify, render_template, request
+from extensions import db, socketio, csrf, migrate
 from config import Config
 from utils.security import add_security_headers, generate_csrf_token
 
@@ -10,17 +12,93 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
 
     db.init_app(app)
-    socketio.init_app(app, cors_allowed_origins="*", ping_timeout=60, ping_interval=25,
+    migrate.init_app(app, db)
+    socketio.init_app(app, cors_allowed_origins=app.config['WEBSOCKET_CORS_ORIGINS'].split(','),
+                      ping_timeout=60, ping_interval=25,
                       max_http_buffer_size=100000, async_mode='threading',
                       logger=False, engineio_logger=False)
     csrf.init_app(app)
 
+    _setup_logging(app)
     app.jinja_env.globals['csrf_token'] = generate_csrf_token
 
     @app.after_request
     def after_request(response):
         return add_security_headers(response)
 
+    _register_error_handlers(app)
+    _register_health_check(app)
+    _register_blueprints(app)
+
+    with app.app_context():
+        from models import (User, Profile, Company, Job, Application,
+                            Notification, SavedJob, Skill,
+                            AdminActivityLog, AdminSession)
+        db.create_all()
+        _run_migrations()
+        seed_data()
+
+    return app
+
+
+def _setup_logging(app):
+    log_level = logging.DEBUG if app.debug else logging.INFO
+    logging.basicConfig(
+        level=log_level,
+        format='%(asctime)s %(levelname)s [%(name)s] %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
+    logging.getLogger('werkzeug').setLevel(logging.WARNING)
+    app.logger.setLevel(log_level)
+
+
+def _register_error_handlers(app):
+    @app.errorhandler(404)
+    def not_found(e):
+        if request_wants_json():
+            return jsonify({'status': 'error', 'message': 'الصفحة غير موجودة'}), 404
+        return render_template('errors/404.html'), 404
+
+    @app.errorhandler(500)
+    def internal_error(e):
+        db.session.rollback()
+        app.logger.error(f'Internal server error: {e}')
+        if request_wants_json():
+            return jsonify({'status': 'error', 'message': 'خطأ في الخادم'}), 500
+        return render_template('errors/500.html'), 500
+
+    @app.errorhandler(403)
+    def forbidden(e):
+        if request_wants_json():
+            return jsonify({'status': 'error', 'message': 'غير مصرح'}), 403
+        return render_template('errors/403.html'), 403
+
+
+def request_wants_json():
+    from flask import request
+    return request.path.startswith('/api/')
+
+
+def _register_health_check(app):
+    @app.route('/health')
+    def health_check():
+        try:
+            db.session.execute(db.text('SELECT 1'))
+            db_status = 'healthy'
+        except Exception:
+            db_status = 'unhealthy'
+
+        status_code = 200 if db_status == 'healthy' else 503
+        return jsonify({
+            'status': 'healthy' if db_status == 'healthy' else 'degraded',
+            'timestamp': datetime.now(timezone.utc).isoformat(),
+            'services': {
+                'database': db_status,
+            }
+        }), status_code
+
+
+def _register_blueprints(app):
     from routes.auth import bp as auth_bp
     from routes.jobs import bp as jobs_bp
     from routes.companies import bp as companies_bp
@@ -35,12 +113,19 @@ def create_app(config_class=Config):
     app.register_blueprint(notifications_bp)
     app.register_blueprint(main_bp)
 
-    with app.app_context():
-        from models import User, Profile, Company, Job, Application, Notification
-        db.create_all()
-        seed_data()
 
-    return app
+def _run_migrations():
+    """Run lightweight migrations for columns that may not exist yet."""
+    migrations = [
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS last_login_ip VARCHAR(45)",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS two_factor_enabled BOOLEAN DEFAULT FALSE",
+    ]
+    for sql in migrations:
+        try:
+            db.session.execute(db.text(sql))
+        except Exception:
+            pass
+    db.session.commit()
 
 
 def seed_data():
@@ -125,5 +210,5 @@ if __name__ == '__main__':
     app = create_app()
     debug = os.environ.get('FLASK_DEBUG', '0') == '1'
     port = int(os.environ.get('PORT', 5000))
-    print(f"Server: http://0.0.0.0:{port}")
+    app.logger.info(f"Server starting on http://0.0.0.0:{port}")
     socketio.run(app, host='0.0.0.0', port=port, debug=debug, allow_unsafe_werkzeug=True)

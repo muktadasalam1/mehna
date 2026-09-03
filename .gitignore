@@ -1,7 +1,29 @@
-cloudflared.exe
-SKILLS/
-__pycache__/
-*.pyc
+# Environment variables
 .env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
 venv/
-.pytest_cache/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Database
+*.db
+
+# Logs
+*.log
+
+# Uploads
+uploads/
