@@ -1,0 +1,152 @@
+{% extends "admin_base.html" %}
+
+{% block title %}مهنة — {{ user.full_name }}{% endblock %}
+{% block topbar_title %}تفاصيل المستخدم{% endblock %}
+
+{% block content %}
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--sp-6);">
+    <div class="section-title" style="margin-bottom:0;">
+        <i class="fa-solid fa-user"></i>{{ user.full_name }}
+    </div>
+    <a href="/admin/users" class="btn btn-ghost btn-sm">
+        <i class="fa-solid fa-arrow-right"></i> العودة
+    </a>
+</div>
+
+<!-- Badges -->
+<div style="display:flex;gap:var(--sp-2);flex-wrap:wrap;margin-bottom:var(--sp-6);">
+    {% if user.is_active %}
+        <span class="badge badge-success">نشط</span>
+    {% else %}
+        <span class="badge badge-danger">معطل</span>
+    {% endif %}
+    {% if user.is_admin %}
+        <span class="badge badge-info">أدمن</span>
+    {% endif %}
+    <span class="badge badge-neutral">{% if user.user_type == 'employer' %}صاحب عمل{% else %}باحث عن عمل{% endif %}</span>
+    <span class="badge badge-neutral">الخطة: {% if user.plan == 'pro' %}Pro{% else %}مجانية{% endif %}</span>
+</div>
+
+<!-- User Info -->
+<div class="panel" style="margin-bottom:var(--sp-6);">
+    <div class="panel-header">
+        <h3><i class="fa-solid fa-circle-info"></i>معلومات المستخدم</h3>
+    </div>
+    <div style="padding:var(--sp-6);">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(250px, 1fr));gap:var(--sp-5);">
+            <div>
+                <div class="stat-card-label">الاسم</div>
+                <div style="font-weight:600;color:var(--text-primary);">{{ user.full_name }}</div>
+            </div>
+            <div>
+                <div class="stat-card-label">البريد الإلكتروني</div>
+                <div style="font-weight:600;color:var(--text-primary);">{{ user.email }}</div>
+            </div>
+            <div>
+                <div class="stat-card-label">نوع المستخدم</div>
+                <div style="font-weight:600;color:var(--text-primary);">{% if user.user_type == 'employer' %}صاحب عمل{% else %}باحث عن عمل{% endif %}</div>
+            </div>
+            <div>
+                <div class="stat-card-label">تاريخ التسجيل</div>
+                <div style="font-weight:600;color:var(--text-primary);">{{ user.created_at.strftime('%Y-%m-%d %H:%M') if user.last_login else '---' }}</div>
+            </div>
+            <div>
+                <div class="stat-card-label">آخر دخول</div>
+                <div style="font-weight:600;color:var(--text-primary);">{{ user.last_login.strftime('%Y-%m-%d %H:%M') if user.last_login else 'لم يسجل دخول بعد' }}</div>
+            </div>
+            <div>
+                <div class="stat-card-label">الباقة</div>
+                <div style="font-weight:600;color:var(--text-primary);">{% if user.plan == 'pro' %}Pro (مدفوعة){% else %}مجانية{% endif %}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Profile -->
+{% if profile %}
+<div class="panel" style="margin-bottom:var(--sp-6);">
+    <div class="panel-header">
+        <h3><i class="fa-solid fa-id-card"></i>الملف الشخصي</h3>
+    </div>
+    <div style="padding:var(--sp-6);">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(250px, 1fr));gap:var(--sp-5);">
+            <div>
+                <div class="stat-card-label">الهاتف</div>
+                <div style="font-weight:600;color:var(--text-primary);">{{ profile.phone or 'غير محدد' }}</div>
+            </div>
+            <div>
+                <div class="stat-card-label">المدينة</div>
+                <div style="font-weight:600;color:var(--text-primary);">{{ profile.location or 'غير محدد' }}</div>
+            </div>
+        </div>
+        {% if profile.bio %}
+        <div style="margin-top:var(--sp-6);">
+            <div class="stat-card-label">نبذة شخصية</div>
+            <p style="margin-top:var(--sp-2);line-height:1.8;color:var(--text-secondary);">{{ profile.bio }}</p>
+        </div>
+        {% endif %}
+        {% if profile.skills %}
+        <div style="margin-top:var(--sp-6);">
+            <div class="stat-card-label">المهارات</div>
+            <div style="display:flex;gap:var(--sp-2);flex-wrap:wrap;margin-top:var(--sp-2);">
+                {% for skill in profile.skills %}
+                    <span class="badge badge-neutral">{{ skill }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Jobs (for employers) -->
+{% if jobs %}
+<div class="panel" style="margin-bottom:var(--sp-6);">
+    <div class="panel-header">
+        <h3><i class="fa-solid fa-briefcase"></i>الوظائف المنشورة</h3>
+        <span class="panel-count">{{ jobs | length }}</span>
+    </div>
+    <div class="panel-body">
+        {% for job in jobs %}
+        <div class="row-item">
+            <div class="row-item-info">
+                <div class="row-item-title">{{ job.title }}</div>
+                <div class="row-item-meta">
+                    <span><i class="fa-solid fa-location-dot"></i> {{ job.location }}</span>
+                    <span><i class="fa-solid fa-money-bill"></i> {{ job.salary_range }}</span>
+                </div>
+            </div>
+            <span class="badge {% if job.is_active %}badge-success{% else %}badge-danger{% endif %}">
+                {% if job.is_active %}نشطة{% else %}مغلقة{% endif %}
+            </span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Applications (for seekers) -->
+{% if applications %}
+<div class="panel">
+    <div class="panel-header">
+        <h3><i class="fa-solid fa-file-lines"></i>الطلبات المقدمة</h3>
+        <span class="panel-count">{{ applications | length }}</span>
+    </div>
+    <div class="panel-body">
+        {% for app in applications %}
+        <div class="row-item">
+            <div class="row-item-info">
+                <div class="row-item-title">{{ app.job.title if app.job else 'وظيفة محذوفة' }}</div>
+                <div class="row-item-meta">
+                    <span><i class="fa-solid fa-building"></i> {{ app.job.company.name if app.job and app.job.company else '---' }}</span>
+                </div>
+            </div>
+            <span class="badge {% if app.status == 'pending' %}badge-warning{% elif app.status == 'accepted' %}badge-success{% else %}badge-danger{% endif %}">
+                {% if app.status == 'pending' %}قيد الانتظار{% elif app.status == 'accepted' %}مقبول{% else %}مرفوض{% endif %}
+            </span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}
