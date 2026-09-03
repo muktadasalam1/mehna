@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mehna — Iraq's Direct Gateway to Opportunity</title>
+  <meta name="description" content="Mehna is Iraq's trusted bilingual employment marketplace connecting verified talent with employers across corporate and trade sectors." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/landing.css" />
+</head>
+<body>
+  {% include 'landing/components/floating-shapes.html' %}
+
+  {% include 'landing/components/header.html' %}
+
+  <main>
+    {% include 'landing/components/hero.html' %}
+    {% include 'landing/components/ecosystem.html' %}
+    {% include 'landing/components/trust.html' %}
+    {% include 'landing/components/stories.html' %}
+    {% include 'landing/components/pricing.html' %}
+  </main>
+
+  {% include 'landing/components/footer.html' %}
+
+  <script src="/static/js/landing.js"></script>
+</body>
+</html>
