@@ -1,0 +1,13 @@
+line-length = 120
+target-version = "py312"
+
+[lint]
+select = ["E", "F", "W", "I", "UP"]
+ignore = ["E501"]
+
+[lint.isort]
+known-first-party = ["models", "routes", "services", "utils", "extensions"]
+
+[format]
+quote-style = "single"
+indent-style = "space"

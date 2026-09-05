@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}مهنة — لوحة التحكم{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="icon" href="/static/logo.png" type="image/png" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-theme.css') }}" />
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-inner">
+            <!-- Logo -->
+            <div class="sidebar-logo">
+                <a href="/" class="sidebar-logo-link">
+                    <img src="/static/logo.png" alt="مهنة" class="sidebar-logo-img" />
+                    <span class="sidebar-logo-text">مهنة</span>
+                </a>
+                <button class="sidebar-close-btn" id="sidebar-close" aria-label="إغلاق القائمة">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="sidebar-nav" role="navigation" aria-label="القائمة الرئيسية">
+                <!-- General -->
+                <div class="sidebar-section">
+                    <span class="sidebar-section-label">عام</span>
+                    <a href="/admin" class="sidebar-link {% if page == 'admin' %}active{% endif %}">
+                        <i class="fa-solid fa-gauge-high sidebar-link-icon"></i>
+                        <span>لوحة التحكم</span>
+                    </a>
+                    <a href="/admin/dashboard" class="sidebar-link {% if page == 'admin_dashboard_full' %}active{% endif %}">
+                        <i class="fa-solid fa-chart-line sidebar-link-icon"></i>
+                        <span>لوحة التحكم الكاملة</span>
+                    </a>
+                </div>
+
+                <!-- Tools -->
+                <div class="sidebar-section">
+                    <span class="sidebar-section-label">الأدوات</span>
+                    <a href="/admin/users" class="sidebar-link {% if page == 'admin_users' %}active{% endif %}">
+                        <i class="fa-solid fa-users sidebar-link-icon"></i>
+                        <span>إدارة المستخدمين</span>
+                    </a>
+                    <a href="/admin/companies" class="sidebar-link {% if page == 'admin_companies' or page == 'admin_company_details' %}active{% endif %}">
+                        <i class="fa-solid fa-building sidebar-link-icon"></i>
+                        <span>إدارة الشركات</span>
+                    </a>
+                    <a href="/admin/jobs" class="sidebar-link {% if page == 'admin_jobs' %}active{% endif %}">
+                        <i class="fa-solid fa-briefcase sidebar-link-icon"></i>
+                        <span>الوظائف</span>
+                    </a>
+                </div>
+
+                <!-- Analytics -->
+                <div class="sidebar-section">
+                    <span class="sidebar-section-label">الإحصائيات</span>
+                    <a href="/admin/stats" class="sidebar-link {% if page == 'admin_stats' %}active{% endif %}">
+                        <i class="fa-solid fa-chart-pie sidebar-link-icon"></i>
+                        <span>إحصائيات متقدمة</span>
+                    </a>
+                </div>
+
+                <!-- Account -->
+                <div class="sidebar-section">
+                    <span class="sidebar-section-label">الحساب</span>
+                    <a href="/admin/account" class="sidebar-link {% if page == 'admin_account' %}active{% endif %}">
+                        <i class="fa-solid fa-user sidebar-link-icon"></i>
+                        <span>حسابي</span>
+                    </a>
+                    <a href="/" class="sidebar-link" target="_blank" rel="noopener">
+                        <i class="fa-solid fa-home sidebar-link-icon"></i>
+                        <span>الموقع العام</span>
+                        <i class="fa-solid fa-up-right-from-square sidebar-link-icon" style="margin-inline-start:auto;font-size:10px;opacity:0.4;"></i>
+                    </a>
+                    <a href="/logout" class="sidebar-link sidebar-link-danger">
+                        <i class="fa-solid fa-right-from-bracket sidebar-link-icon"></i>
+                        <span>خروج</span>
+                    </a>
+                </div>
+            </nav>
+
+            <!-- Promo Card -->
+            <div class="sidebar-promo">
+                <div class="sidebar-promo-icon">
+                    <i class="fa-solid fa-crown"></i>
+                </div>
+                <div class="sidebar-promo-text">ترقية الباقة</div>
+                <div class="sidebar-promo-desc">افتح جميع المميزات للمගمين</div>
+                <a href="/pricing" class="sidebar-promo-btn">الباقات</a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Sidebar overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Main wrapper -->
+    <div class="main-wrapper" id="main-wrapper">
+        <!-- Top Bar -->
+        <header class="topbar">
+            <div class="topbar-right">
+                <button class="topbar-menu-btn" id="sidebar-toggle" aria-label="فتح القائمة">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h1 class="topbar-title">{% block topbar_title %}لوحة التحكم{% endblock %}</h1>
+            </div>
+
+            <div class="topbar-left">
+                <!-- Search -->
+                <div class="topbar-search">
+                    <i class="fa-solid fa-magnifying-glass topbar-search-icon"></i>
+                    <input type="text" class="topbar-search-input" placeholder="بحث..." aria-label="بحث" />
+                </div>
+
+                <!-- Notifications -->
+                <div class="topbar-actions">
+                    <div class="topbar-action-btn" id="notif-btn" role="button" aria-label="الإشعارات" tabindex="0">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="topbar-badge" id="notif-badge">0</span>
+                    </div>
+                </div>
+
+                <!-- Theme Toggle -->
+                <button class="topbar-action-btn" id="theme-toggle" aria-label="تغيير السمة" title="تبديل السمة">
+                    <i class="fa-solid fa-sun" id="theme-icon-light"></i>
+                    <i class="fa-solid fa-moon" id="theme-icon-dark"></i>
+                </button>
+
+                <!-- User -->
+                <div class="topbar-user">
+                    <div class="topbar-avatar">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <div class="topbar-user-info">
+                        <span class="topbar-user-name">{{ session.get('user_name', 'مدير') }}</span>
+                        <span class="topbar-user-role">مدير النظام</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-bar">
+                    {% for category, message in messages %}
+                        <div class="flash-item flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Content -->
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='js/socket-client.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/admin-layout.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

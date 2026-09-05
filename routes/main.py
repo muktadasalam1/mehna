@@ -13,13 +13,18 @@ bp = Blueprint('main', __name__)
 
 @bp.route('/')
 def index():
-    jobs = job_service.get_active_jobs(limit=6)
+    jobs, _, _, _ = job_service.get_active_jobs(limit=6)
     stats = {
         'jc': Job.query.filter_by(is_active=True).count(),
         'cc': Company.query.filter_by(is_verified=True).count(),
         'sc': User.query.filter_by(user_type='job_seeker').count()
     }
     return render_template('index_home.html', page='home', jobs=jobs, stats=stats)
+
+
+@bp.route('/new')
+def new_landing():
+    return render_template('landing/index.html')
 
 
 @bp.route('/dashboard')
@@ -30,8 +35,21 @@ def dashboard():
 
     if session['user_role'] == 'job_seeker':
         profile = Profile.query.filter_by(user_id=session['user_id']).first()
-        applications = Application.query.filter_by(job_seeker_id=session['user_id']).all()
-        return render_template('index_dashboard.html', page='dashboard', profile=profile, applications=applications)
+        applications = db.session.query(Application).filter_by(
+            job_seeker_id=session['user_id']
+        ).all()
+        enriched_apps = []
+        for app in applications:
+            job = Job.query.get(app.job_id)
+            company = Company.query.get(job.company_id) if job else None
+            enriched_apps.append({
+                'id': app.id,
+                'status': app.status,
+                'created_at': app.created_at,
+                'title': job.title if job else 'وظيفة محذوفة',
+                'company_name': company.name if company else '---',
+            })
+        return render_template('index_dashboard.html', page='dashboard', profile=profile, applications=enriched_apps)
     else:
         companies = company_service.get_companies_by_employer(session['user_id'])
         my_company = company_service.get_company_by_employer(session['user_id'])
@@ -45,10 +63,10 @@ def dashboard():
 
         jobs_list = []
         if companies:
-            ids = [str(x.id) for x in companies]
+            ids = [x.id for x in companies]
             if ids:
                 jobs_list = Job.query.filter(
-                    Job.company_id.in_([int(x) for x in ids])
+                    Job.company_id.in_(ids)
                 ).order_by(Job.created_at.desc()).all()
 
         return render_template('index_dashboard.html', page='dashboard',
@@ -72,7 +90,7 @@ def about():
     return render_template('index_about.html', page='about')
 
 
-@bp.route('/upgrade-plan/<plan>')
+@bp.route('/upgrade-plan/<plan>', methods=['POST'])
 @login_required
 def upgrade_plan(plan):
     if plan not in ['pro']:
@@ -91,7 +109,7 @@ def upgrade_plan(plan):
             from datetime import datetime
             user.plan_month_start = datetime.now().date()
             user.payment_status = 'active'
-            db.session.commit()
+        db.session.commit()
 
         company_service.upgrade_company_plan(company.id)
         flash('✅ تم الترقية وتوثيق الشركة بنجاح!', 'success')

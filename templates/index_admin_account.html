@@ -1,0 +1,950 @@
+{% extends "admin_base.html" %}
+
+{% block title %}مهنة — حسابي{% endblock %}
+{% block topbar_title %}حسابي{% endblock %}
+
+{% block content %}
+<div class="account-page">
+    <!-- Top Row: Profile + Security (side by side) -->
+    <div class="account-grid-2">
+        <!-- Profile Card (existing, unchanged) -->
+        <div class="account-card">
+            <!-- Identity Header -->
+            <div class="account-header">
+                <div class="account-avatar">
+                    <span class="account-avatar-initials">{{ user.full_name[:2] if user.full_name else 'م د' }}</span>
+                </div>
+                <div class="account-identity">
+                    <h2 class="account-name">{{ user.full_name }}</h2>
+                    <span class="badge badge-info account-role-badge">
+                        <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+                        مدير النظام
+                    </span>
+                </div>
+            </div>
+
+            <div class="account-divider"></div>
+
+            <!-- Info Grid -->
+            <div class="account-info-grid">
+                <div class="account-info-item">
+                    <div class="account-info-icon">
+                        <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                    </div>
+                    <div class="account-info-body">
+                        <span class="account-info-label">البريد الإلكتروني</span>
+                        <span class="account-info-value">{{ user.email }}</span>
+                    </div>
+                </div>
+
+                <div class="account-info-item">
+                    <div class="account-info-icon">
+                        <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
+                    </div>
+                    <div class="account-info-body">
+                        <span class="account-info-label">تاريخ الانضمام</span>
+                        <span class="account-info-value">{{ user.created_at.strftime('%d %B %Y') if user.created_at else '---' }}</span>
+                    </div>
+                </div>
+
+                <div class="account-info-item">
+                    <div class="account-info-icon">
+                        <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                    </div>
+                    <div class="account-info-body">
+                        <span class="account-info-label">حالة الحساب</span>
+                        <span class="account-info-value">
+                            {% if user.is_active %}
+                                <span class="badge badge-success">
+                                    <i class="fa-solid fa-check" aria-hidden="true"></i>
+                                    نشط
+                                </span>
+                            {% else %}
+                                <span class="badge badge-danger">
+                                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                                    معطل
+                                </span>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="account-info-item">
+                    <div class="account-info-icon">
+                        <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
+                    </div>
+                    <div class="account-info-body">
+                        <span class="account-info-label">نوع الحساب</span>
+                        <span class="account-info-value">
+                            {% if user.is_admin %}
+                                <span class="badge badge-warning">
+                                    <i class="fa-solid fa-crown" aria-hidden="true"></i>
+                                   مدير
+                                </span>
+                            {% else %}
+                                <span class="badge badge-neutral">مستخدم</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="account-divider"></div>
+
+            <div class="account-actions">
+                <a href="/profile" class="btn btn-primary account-btn" target="_blank" rel="noopener">
+                    <i class="fa-solid fa-up-right-from-square" aria-hidden="true"></i>
+                    فتح الملف الشخصي الكامل
+                </a>
+            </div>
+        </div>
+
+        <!-- Security Card (new) -->
+        <div class="account-card" id="security-card">
+            <div class="account-card-header">
+                <h3 class="account-card-title">
+                    <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+                    الأمان
+                </h3>
+            </div>
+            <div class="account-card-body">
+                <!-- Loading skeleton -->
+                <div id="security-skeleton" class="account-skeleton-wrap">
+                    <div class="account-skeleton-line" style="width:60%"></div>
+                    <div class="account-skeleton-line short"></div>
+                    <div class="account-skeleton-line" style="width:80%"></div>
+                    <div class="account-skeleton-line short"></div>
+                </div>
+
+                <!-- Error state -->
+                <div id="security-error" class="account-empty-state" style="display:none;">
+                    <i class="fa-solid fa-triangle-exclamation account-empty-icon"></i>
+                    <p class="account-empty-text">تعذر تحميلبيانات الأمان</p>
+                    <button class="btn btn-ghost btn-sm" onclick="loadSecurity()">
+                        <i class="fa-solid fa-rotate-right"></i> إعادة المحاولة
+                    </button>
+                </div>
+
+                <!-- Security fields (populated by JS) -->
+                <div id="security-content" style="display:none;">
+                    <div class="account-info-item">
+                        <div class="account-info-icon">
+                            <i class="fa-solid fa-clock" aria-hidden="true"></i>
+                        </div>
+                        <div class="account-info-body">
+                            <span class="account-info-label">آخر تسجيل دخول</span>
+                            <span class="account-info-value" id="sec-last-login">---</span>
+                        </div>
+                    </div>
+                    <div class="account-info-item">
+                        <div class="account-info-icon">
+                            <i class="fa-solid fa-globe" aria-hidden="true"></i>
+                        </div>
+                        <div class="account-info-body">
+                            <span class="account-info-label">عنوان IP</span>
+                            <span class="account-info-value" id="sec-last-ip">---</span>
+                        </div>
+                    </div>
+                    <div class="account-info-item">
+                        <div class="account-info-icon">
+                            <i class="fa-solid fa-desktop" aria-hidden="true"></i>
+                        </div>
+                        <div class="account-info-body">
+                            <span class="account-info-label">الجلسات النشطة</span>
+                            <span class="account-info-value">
+                                <span id="sec-sessions">0</span>
+                                <button class="btn btn-ghost btn-sm account-link-btn" onclick="openSessionsModal()">عرض الجلسات</button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="account-info-item">
+                        <div class="account-info-icon">
+                            <i class="fa-solid fa-key" aria-hidden="true"></i>
+                        </div>
+                        <div class="account-info-body">
+                            <span class="account-info-label">التحقق بخطوتين</span>
+                            <span class="account-info-value">
+                                <span id="sec-2fa" class="badge badge-neutral">قريباً</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Log Card (full width) -->
+    <div class="account-card" id="activity-card">
+        <div class="account-card-header">
+            <h3 class="account-card-title">
+                <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+                سجل النشاطات
+            </h3>
+            <span class="panel-count" id="activity-total">0</span>
+        </div>
+        <div class="account-card-body">
+            <!-- Loading skeleton -->
+            <div id="activity-skeleton" class="account-skeleton-wrap">
+                <div class="account-skeleton-line"></div>
+                <div class="account-skeleton-line short"></div>
+                <div class="account-skeleton-line"></div>
+                <div class="account-skeleton-line short"></div>
+                <div class="account-skeleton-line"></div>
+            </div>
+
+            <!-- Error state -->
+            <div id="activity-error" class="account-empty-state" style="display:none;">
+                <i class="fa-solid fa-triangle-exclamation account-empty-icon"></i>
+                <p class="account-empty-text">تعذر تحميل سجل النشاطات</p>
+                <button class="btn btn-ghost btn-sm" onclick="loadActivity(1)">
+                    <i class="fa-solid fa-rotate-right"></i> إعادة المحاولة
+                </button>
+            </div>
+
+            <!-- Empty state -->
+            <div id="activity-empty" class="account-empty-state" style="display:none;">
+                <i class="fa-solid fa-inbox account-empty-icon"></i>
+                <p class="account-empty-text">لا توجد نشاطات بعد</p>
+            </div>
+
+            <!-- Activity list -->
+            <div id="activity-list" class="account-activity-list" style="display:none;"></div>
+
+            <!-- Load more -->
+            <div id="activity-more-wrap" style="display:none; text-align:center; padding: var(--sp-4);">
+                <button class="btn btn-ghost btn-sm" id="activity-load-more" onclick="loadNextPage()">
+                    <i class="fa-solid fa-plus"></i> تحميل المزيد
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sessions Modal -->
+<div class="account-modal-overlay" id="sessions-modal" style="display:none;">
+    <div class="account-modal">
+        <div class="account-modal-header">
+            <h3 class="account-modal-title">
+                <i class="fa-solid fa-desktop" aria-hidden="true"></i>
+               الجلسات النشطة
+            </h3>
+            <button class="account-modal-close" onclick="closeSessionsModal()" aria-label="إغلاق">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="account-modal-body" id="sessions-modal-body">
+            <!-- Loading -->
+            <div class="account-skeleton-wrap">
+                <div class="account-skeleton-line"></div>
+                <div class="account-skeleton-line short"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* ============================================================
+   Account Page — Security + Activity Log extensions
+   Reuses admin-theme.css variable system exclusively.
+   ============================================================ */
+
+/* ── Page layout ── */
+.account-page {
+    width: 100%;
+    animation: fadeSlideUp var(--dur-slow) var(--ease) both;
+}
+
+/* Two-column grid: profile + security */
+.account-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-6);
+    margin-bottom: var(--sp-6);
+}
+
+@media (max-width: 768px) {
+    .account-grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Card (shared) ── */
+.account-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+    animation: fadeSlideUp var(--dur-slow) var(--ease) both;
+}
+
+/* ── Card header ── */
+.account-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--sp-4) var(--sp-6);
+    border-bottom: 1px solid var(--border);
+}
+
+.account-card-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+}
+
+.account-card-title i {
+    color: var(--accent);
+    font-size: 14px;
+}
+
+/* ── Card body ── */
+.account-card-body {
+    padding: 0;
+}
+
+/* ── Existing profile styles (kept for reference) ── */
+.account-header {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-5);
+    padding: var(--sp-8) var(--sp-6);
+    background: linear-gradient(135deg, var(--accent-soft), transparent 60%);
+}
+
+.account-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    border: 2px solid var(--accent-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+
+.account-avatar:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px var(--accent-soft);
+}
+
+.account-avatar-initials {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    user-select: none;
+}
+
+.account-identity {
+    flex: 1;
+    min-width: 0;
+}
+
+.account-name {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--text-primary);
+    margin-bottom: var(--sp-2);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+}
+
+.account-role-badge {
+    font-size: 12px;
+    padding: 4px 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.account-divider {
+    height: 1px;
+    background: var(--border);
+}
+
+.account-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+}
+
+.account-info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-3);
+    padding: var(--sp-4) var(--sp-5);
+    background: var(--bg-card);
+    transition: background var(--dur-fast);
+}
+
+.account-info-item:hover {
+    background: var(--bg-card-hover);
+}
+
+@media (max-width: 480px) {
+    .account-info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.account-info-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--r-md);
+    background: var(--accent-soft);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.account-info-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.account-info-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    margin-bottom: var(--sp-1);
+}
+
+.account-info-value {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    word-break: break-word;
+}
+
+.account-info-value .badge {
+    font-size: 12px;
+    padding: 3px 10px;
+}
+
+.account-actions {
+    padding: var(--sp-6);
+    display: flex;
+    justify-content: center;
+}
+
+.account-btn {
+    padding: var(--sp-3) var(--sp-6);
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: var(--r-md);
+    text-decoration: none;
+}
+
+/* ── Security link button ── */
+.account-link-btn {
+    font-size: 12px;
+    padding: 2px 8px;
+    color: var(--accent);
+    border-color: var(--accent-border);
+    margin-inline-start: auto;
+}
+
+.account-link-btn:hover {
+    background: var(--accent-soft);
+}
+
+/* ── Skeleton loading ── */
+.account-skeleton-wrap {
+    padding: var(--sp-5) var(--sp-6);
+}
+
+.account-skeleton-line {
+    height: 14px;
+    border-radius: var(--r-sm);
+    background: linear-gradient(90deg, var(--bg-surface) 25%, var(--bg-card-hover) 50%, var(--bg-surface) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    margin-bottom: var(--sp-3);
+}
+
+.account-skeleton-line.short {
+    width: 45%;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ── Empty / Error states ── */
+.account-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--sp-8) var(--sp-6);
+    text-align: center;
+}
+
+.account-empty-icon {
+    font-size: 24px;
+    color: var(--text-muted);
+    margin-bottom: var(--sp-3);
+    opacity: 0.6;
+}
+
+.account-empty-text {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: var(--sp-3);
+}
+
+/* ── Activity list ── */
+.account-activity-list {
+    /* each row is a .account-activity-item */
+}
+
+.account-activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sp-3);
+    padding: var(--sp-4) var(--sp-6);
+    border-bottom: 1px solid var(--border);
+    transition: background var(--dur-fast);
+}
+
+.account-activity-item:last-child {
+    border-bottom: none;
+}
+
+.account-activity-item:hover {
+    background: var(--bg-card-hover);
+}
+
+.account-activity-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--r-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+/* Color by action type */
+.account-activity-icon.action-login     { background: var(--accent-soft); color: var(--accent); }
+.account-activity-icon.action-company   { background: var(--success-soft); color: var(--success); }
+.account-activity-icon.action-user      { background: rgba(59, 130, 246, 0.10); color: #3B82F6; }
+.account-activity-icon.action-danger    { background: var(--danger-soft); color: var(--danger); }
+
+.account-activity-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.account-activity-desc {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+
+.account-activity-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+}
+
+/* ── Modal ── */
+.account-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--sp-4);
+    animation: fadeIn var(--dur-fast) var(--ease) both;
+}
+
+.account-modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    width: 100%;
+    max-width: 520px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: fadeSlideUp var(--dur) var(--ease) both;
+}
+
+.account-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--sp-4) var(--sp-6);
+    border-bottom: 1px solid var(--border);
+}
+
+.account-modal-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+}
+
+.account-modal-title i {
+    color: var(--accent);
+}
+
+.account-modal-close {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--r-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    transition: background var(--dur-fast), color var(--dur-fast);
+}
+
+.account-modal-close:hover {
+    background: var(--danger-soft);
+    color: var(--danger);
+}
+
+.account-modal-body {
+    padding: 0;
+    overflow-y: auto;
+}
+
+/* Session item in modal */
+.account-session-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-3);
+    padding: var(--sp-4) var(--sp-6);
+    border-bottom: 1px solid var(--border);
+}
+
+.account-session-item:last-child {
+    border-bottom: none;
+}
+
+.account-session-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.account-session-ip {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+
+.account-session-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+    .account-header {
+        flex-direction: column;
+        text-align: center;
+        padding: var(--sp-6) var(--sp-5);
+    }
+
+    .account-identity {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .account-name {
+        font-size: 18px;
+    }
+
+    .account-info-item {
+        padding: var(--sp-3) var(--sp-4);
+    }
+
+    .account-activity-item {
+        padding: var(--sp-3) var(--sp-4);
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    "use strict";
+
+    // ── Helpers ──────────────────────────────────────────────────
+    const API_BASE = "/admin/api/account";
+    let activityPage = 1;
+    let activityHasMore = false;
+
+    function getCsrfToken() {
+        const meta = document.querySelector('meta[name="csrf-token"]');
+        if (meta) return meta.getAttribute("content");
+        // Fallback: read from cookie
+        const match = document.cookie.match(/csrf_token=([^;]+)/);
+        return match ? match[1] : "";
+    }
+
+    async function apiFetch(url, opts = {}) {
+        const defaults = {
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCsrfToken(),
+            },
+            credentials: "same-origin",
+        };
+        const res = await fetch(url, { ...defaults, ...opts });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+    }
+
+    // Relative time in Arabic
+    function relativeTime(isoStr) {
+        if (!isoStr) return "";
+        const now = Date.now();
+        const then = new Date(isoStr).getTime();
+        const diffSec = Math.floor((now - then) / 1000);
+        if (diffSec < 60) return "الآن";
+        const diffMin = Math.floor(diffSec / 60);
+        if (diffMin < 60) return `منذ ${diffMin} ${diffMin === 1 ? 'دقيقة' : 'دقائق'}`;
+        const diffHr = Math.floor(diffMin / 60);
+        if (diffHr < 24) return `منذ ${diffHr} ${diffHr === 1 ? 'ساعة' : 'ساعات'}`;
+        const diffDay = Math.floor(diffHr / 24);
+        if (diffDay < 30) return `منذ ${diffDay} ${diffDay === 1 ? 'يوم' : 'أيام'}`;
+        const d = new Date(isoStr);
+        return d.toLocaleDateString("ar-IQ", { year: "numeric", month: "short", day: "numeric" });
+    }
+
+    function formatDateTime(isoStr) {
+        if (!isoStr) return "---";
+        const d = new Date(isoStr);
+        return d.toLocaleDateString("ar-IQ", {
+            year: "numeric", month: "short", day: "numeric",
+            hour: "2-digit", minute: "2-digit",
+        });
+    }
+
+    // Action type → icon + color class
+    function actionMeta(actionType) {
+        const map = {
+            login:              { icon: "fa-right-to-bracket", cls: "action-login", label: "تسجيل دخول" },
+            user_toggled:       { icon: "fa-user-shield",      cls: "action-user",   label: "تغيير حالة مستخدم" },
+            user_made_admin:    { icon: "fa-user-plus",        cls: "action-user",   label: "ترقية،دمن" },
+            user_removed_admin: { icon: "fa-user-minus",       cls: "action-danger", label: "إزالة صلاحية أدمン" },
+            company_approved:   { icon: "fa-circle-check",     cls: "action-company",label: "توثيق شركة" },
+            company_rejected:   { icon: "fa-circle-xmark",     cls: "action-danger", label: "رفض توثيق" },
+            company_deleted:    { icon: "fa-trash-can",        cls: "action-danger", label: "حذف شركة" },
+        };
+        return map[actionType] || { icon: "fa-circle-info", cls: "action-login", label: actionType };
+    }
+
+    // ── Security Card ────────────────────────────────────────────
+    window.loadSecurity = async function () {
+        const skeleton = document.getElementById("security-skeleton");
+        const errorEl = document.getElementById("security-error");
+        const content = document.getElementById("security-content");
+        skeleton.style.display = "";
+        errorEl.style.display = "none";
+        content.style.display = "none";
+
+        try {
+            const res = await apiFetch(`${API_BASE}/security`);
+            const d = res.data;
+            document.getElementById("sec-last-login").textContent = formatDateTime(d.last_login_at);
+            document.getElementById("sec-last-ip").textContent = d.last_login_ip || "---";
+            document.getElementById("sec-sessions").textContent = d.active_sessions || 0;
+
+            skeleton.style.display = "none";
+            content.style.display = "";
+        } catch (e) {
+            skeleton.style.display = "none";
+            errorEl.style.display = "";
+        }
+    };
+
+    // ── Activity Log ─────────────────────────────────────────────
+    function renderActivityItem(log) {
+        const meta = actionMeta(log.action_type);
+        return `
+            <div class="account-activity-item">
+                <div class="account-activity-icon ${meta.cls}">
+                    <i class="fa-solid ${meta.icon}"></i>
+                </div>
+                <div class="account-activity-body">
+                    <div class="account-activity-desc">${log.description || meta.label}</div>
+                    <div class="account-activity-meta">
+                        <i class="fa-solid fa-clock"></i>
+                        ${relativeTime(log.created_at)}
+                        ${log.ip_address ? `<span>·</span><i class="fa-solid fa-globe"></i> ${log.ip_address}` : ""}
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    window.loadActivity = async function (page) {
+        const skeleton = document.getElementById("activity-skeleton");
+        const errorEl = document.getElementById("activity-error");
+        const emptyEl = document.getElementById("activity-empty");
+        const listEl = document.getElementById("activity-list");
+        const moreWrap = document.getElementById("activity-more-wrap");
+        const totalEl = document.getElementById("activity-total");
+
+        if (page === 1) {
+            skeleton.style.display = "";
+            errorEl.style.display = "none";
+            emptyEl.style.display = "none";
+            listEl.style.display = "none";
+            moreWrap.style.display = "none";
+            listEl.innerHTML = "";
+        }
+
+        try {
+            const res = await apiFetch(`${API_BASE}/activity?page=${page}&per_page=10`);
+            const d = res.data;
+
+            skeleton.style.display = "none";
+
+            if (d.items.length === 0 && page === 1) {
+                emptyEl.style.display = "";
+                return;
+            }
+
+            d.items.forEach(log => {
+                listEl.insertAdjacentHTML("beforeend", renderActivityItem(log));
+            });
+            listEl.style.display = "";
+
+            totalEl.textContent = d.total || 0;
+            activityHasMore = d.has_more;
+            activityPage = page;
+
+            moreWrap.style.display = activityHasMore ? "" : "none";
+        } catch (e) {
+            skeleton.style.display = "none";
+            if (page === 1) {
+                errorEl.style.display = "";
+            }
+        }
+    };
+
+    window.loadNextPage = function () {
+        if (activityHasMore) {
+            loadActivity(activityPage + 1);
+        }
+    };
+
+    // ── Sessions Modal ───────────────────────────────────────────
+    window.openSessionsModal = async function () {
+        const modal = document.getElementById("sessions-modal");
+        const body = document.getElementById("sessions-modal-body");
+        modal.style.display = "flex";
+        body.innerHTML = `
+            <div class="account-skeleton-wrap">
+                <div class="account-skeleton-line"></div>
+                <div class="account-skeleton-line short"></div>
+            </div>`;
+
+        try {
+            const res = await apiFetch(`${API_BASE}/sessions`);
+            const sessions = res.data;
+            if (sessions.length === 0) {
+                body.innerHTML = `
+                    <div class="account-empty-state">
+                        <i class="fa-solid fa-desktop account-empty-icon"></i>
+                        <p class="account-empty-text">لا توجد جلسات نشطة</p>
+                    </div>`;
+                return;
+            }
+
+            body.innerHTML = sessions.map(s => `
+                <div class="account-session-item">
+                    <div class="account-session-info">
+                        <div class="account-session-ip">${s.ip_address || "غير معروف"}</div>
+                        <div class="account-session-meta">
+                            ${s.user_agent ? s.user_agent.substring(0, 60) + "..." : ""}
+                            ${s.last_active_at ? " · آخر نشاط: " + relativeTime(s.last_active_at) : ""}
+                        </div>
+                    </div>
+                    <button class="btn btn-danger btn-sm" onclick="revokeSession('${s.id}', this)">
+                        <i class="fa-solid fa-ban"></i> حذف
+                    </button>
+                </div>
+            `).join("");
+        } catch (e) {
+            body.innerHTML = `
+                <div class="account-empty-state">
+                    <i class="fa-solid fa-triangle-exclamation account-empty-icon"></i>
+                    <p class="account-empty-text">تعذر تحميل الجلسات</p>
+                </div>`;
+        }
+    };
+
+    window.closeSessionsModal = function () {
+        document.getElementById("sessions-modal").style.display = "none";
+    };
+
+    window.revokeSession = async function (sessionId, btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+        try {
+            await apiFetch(`${API_BASE}/sessions/${sessionId}/revoke`, { method: "POST" });
+            const item = btn.closest(".account-session-item");
+            item.style.opacity = "0.4";
+            item.style.pointerEvents = "none";
+            btn.textContent = "تم الحذف";
+            // Update session count in security card
+            const countEl = document.getElementById("sec-sessions");
+            if (countEl) {
+                const cur = parseInt(countEl.textContent) || 0;
+                countEl.textContent = Math.max(0, cur - 1);
+            }
+        } catch (e) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-ban"></i> حذف';
+        }
+    };
+
+    // Close modal on overlay click or Escape
+    document.getElementById("sessions-modal").addEventListener("click", function (e) {
+        if (e.target === this) closeSessionsModal();
+    });
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closeSessionsModal();
+    });
+
+    // ── Init: fetch all data on load ─────────────────────────────
+    loadSecurity();
+    loadActivity(1);
+})();
+</script>
+{% endblock %}
